@@ -1,0 +1,10 @@
+<MenuCardBottom heading="Add Prescription" color="blue" />
+<MenuCardBottom heading="Add Prescription" color="#5e6ba8" />
+
+
+<div className="flex flex-r w-full">
+            <SearchBar placeholder="somedata" data="somedata" />
+          </div>
+
+          
+          <div className="flex flex-col "><div/>
