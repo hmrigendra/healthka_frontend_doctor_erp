@@ -17,7 +17,11 @@ export function Nav() {
     setClinicData(selectedClinic.toString());
     setSubMenuOpen(false);
   };
-  const clinicOptions = ["Clinic1", "Gentle touch family clinic", "Clinic3"];
+  const clinicOptions = [
+    "Clinic1",
+    "Gentle touch family clinic",
+    "Mohan's Clinic",
+  ];
 
   return (
     <div

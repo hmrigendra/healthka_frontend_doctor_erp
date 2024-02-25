@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export function DoctorName() {
-  const [doctorsName, setDoctorsName] = useState(" Venugopal Iyear");
+  const [doctorsName, setDoctorsName] = useState(" I Am Doctor");
   return (
     <div>
       <h1 className="text-2xl text-indigo-900 font-bold">{`Welcome,Dr ${doctorsName}`}</h1>

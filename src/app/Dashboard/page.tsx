@@ -26,7 +26,7 @@ export default function MenuCard() {
           </div>
 
           <div className="bg-blue-200 m-4 mt-8 ml-8 rounded-md">
-            <Link href={"/Menucard"}>
+            <Link href={"/MenuCard2"}>
               <Heading heading="Manage Records" color="bg-production-blue" />
               <CardBody ImageData="/Records.jpg" altData="Records.icon" />
             </Link>

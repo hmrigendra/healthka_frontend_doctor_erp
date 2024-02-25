@@ -1,6 +1,25 @@
 import { Avatar } from "@mui/material";
 
-export function PatientProfileHeader() {
+interface PatientData {
+  id: string;
+  doctor_id: string;
+  patient_id: string;
+  patient_name: string;
+  phone_number: string;
+  created_at: string;
+  gender: string;
+  age: number;
+}
+
+interface PatientProfileHeaderProps {
+  dataLength: number;
+  PatientData: PatientData;
+}
+
+export function PatientProfileHeader({
+  dataLength,
+  PatientData,
+}: PatientProfileHeaderProps) {
   return (
     <div className="flex m-16 mb-2">
       <div className="flex flex-col w-1/4 p-6">
@@ -8,7 +27,7 @@ export function PatientProfileHeader() {
           <Avatar sx={{ width: 120, height: 120, borderRadius: "50%" }}>
             Profile
           </Avatar>
-          <h1 className="p-2">Testing Name</h1>
+          <h1 className="p-2">{PatientData.patient_name}</h1>
 
           <div>
             <button className="bg-indigo-400 p-1 rounded-md mt-2">
@@ -17,7 +36,7 @@ export function PatientProfileHeader() {
           </div>
           <div>
             <button className="bg-indigo-400 p-1 rounded-md mt-2">
-              New prescription
+              Follow Up
             </button>
           </div>
         </div>
@@ -26,14 +45,14 @@ export function PatientProfileHeader() {
         <h1 className="bg-indigo-400 p-2 rounded-md">Personal information</h1>
         <div className="flex bg-blue-100 rounded-lg">
           <div className="w-2/6 p-2">
-            <p>Age</p>
-            <p>Gender</p>
-            <p>Phone NO.</p>
+            <p>AGE: {PatientData.age}</p>
+            <p> Gender:{PatientData.gender}</p>
+            <p>Phone Number: {PatientData.phone_number}</p>
           </div>
           <div className="p-2">
-            <p>NO. of visits:</p>
+            <p>NO. of visits: {dataLength}</p> {/* Use dataLength directly */}
             <p style={{ overflowWrap: "break-word" }}>
-              Address: asd axy main road, Pincode: 560095
+              First visit: {PatientData.created_at}
             </p>
           </div>
         </div>
@@ -41,7 +60,7 @@ export function PatientProfileHeader() {
           Last visit vitals
         </h1>
         <div className="flex w-full rounded-lg  p-4  bg-blue-100">
-          <div className="w-1/2 p-2">
+          {/* <div className="w-1/2 p-2">
             <p>Blood Pressure: 500</p>
             <p>Pulse: 500</p>
           </div>
@@ -52,7 +71,8 @@ export function PatientProfileHeader() {
           <div className="w-1/2 p-2">
             <p>BMI: 500</p>
             <p>Blood Oxygen :500</p>
-          </div>
+          </div> */}
+          Feature coming Soon.....
         </div>
       </div>
     </div>

@@ -8,11 +8,13 @@ import DoctorsProfile from "./DoctorsProfile/page";
 import Services from "./Services/page";
 import Appointment from "./FollowupsChart/page";
 import MenuCard from "./Dashboard/page";
+import Login from "./Login/page";
+import SignUp from "./Signup/page";
 
 export default function Home() {
   return (
     <>
-      <MenuCard />
+      <Login />
     </>
   );
 }
