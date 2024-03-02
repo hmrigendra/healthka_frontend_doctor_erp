@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Login() {
+export default function LoginPage() {
   const [loginInfo, setLoginInfo] = useState({
     doctor_id: "",
     password: "",

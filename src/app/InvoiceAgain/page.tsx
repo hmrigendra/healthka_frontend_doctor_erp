@@ -1,0 +1,582 @@
+"use client";
+import { CustomerData } from "../(Components)/MainInvoiceComponent/CustomerData";
+import { CaseHistory } from "../(Components)/MainInvoiceComponent/CaseHistory";
+import { Header } from "../(Components)/MainInvoiceComponent/Header";
+import { Diagnosis } from "../(Components)/MainInvoiceComponent/Diagnosis";
+import { MedicineData } from "../(Components)/MainInvoiceComponent/MedicineData";
+import { GeneralAdvice } from "../(Components)/MainInvoiceComponent/GeneralAdvice";
+import { Referral } from "../(Components)/MainInvoiceComponent/Referral";
+import { NextVisit } from "../(Components)/MainInvoiceComponent/NextVisit";
+import { SurgeryAdvice } from "../(Components)/MainInvoiceComponent/SurgeryAdvice";
+import { useState, useRef } from "react";
+import { FaMinusCircle } from "react-icons/fa";
+
+import { FaPlusCircle } from "react-icons/fa";
+import axios from "axios";
+import ReactToPrint from "react-to-print";
+import { useRouter } from "next/navigation";
+
+export default function InvoicePage({ invoice }: any) {
+  const CreatePrescription = async () => {
+    try {
+      console.log("Data being sent:", {
+        patient_name: patientData.patient_name,
+        phone_number: patientData.phone_number,
+        age: patientData.age,
+        gender: patientData.gender,
+        case_history: case_history,
+        vitals: vitals,
+        diagnosis: test,
+        diagnosis_history: diagnosis_history,
+        medicine: medicineData,
+        general_advice: general_advice,
+        referral: referral,
+        surgery_advice: surgery_advice,
+        follow_up_date: FollowUpDate,
+        follow_up_time: FollowUpTime,
+      });
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/records/create_prescription",
+        {
+          patient_name: patientData.patient_name,
+          phone_number: patientData.phone_number,
+          age: patientData.age,
+          gender: patientData.gender,
+          case_history: case_history,
+          vitals: vitals,
+          diagnosis: test,
+          diagnosis_history: diagnosis_history,
+          medicine: medicineData,
+          general_advice: general_advice,
+          referral: referral,
+          surgery_advice: surgery_advice,
+          FollowUpTime: FollowUpTime,
+          FollowUpDate: FollowUpDate,
+        },
+
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Data being sent:", {
+        patientData: patientData,
+        case_history: case_history,
+        vitals: vitals,
+        diagnosis_history: diagnosis_history,
+        medicineData: medicineData,
+        general_advice: general_advice,
+        referral: referral,
+        surgery_advice: surgery_advice,
+        FollowUpDate: FollowUpDate,
+        FollowUpTime: FollowUpTime,
+        test: test,
+      });
+    } catch (error) {
+      // Handle errors here
+      console.error("Error creating prescription:", error);
+    }
+  };
+  const Router = useRouter();
+  const SendCustomerData = () => {
+    Router.push(`/Bill?customer_name=${patientData.patient_name}&number=${patientData.phone_number}
+    &age=${patientData.age}&gender=${patientData.gender}`);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  //Use State division for data
+
+  //Customer
+  const [patientData, setPatientData] = useState({
+    patient_name: "",
+    phone_number: "",
+    age: 0,
+    gender: "",
+  });
+
+  //Complains
+  const [case_history, setComplains] = useState("");
+
+  const [vitals, setVitals] = useState([{ vites_name: "", vite_result: "" }]);
+
+  const addVitals = () => {
+    setVitals([
+      ...vitals,
+      {
+        vites_name: "",
+        vite_result: "",
+      },
+    ]);
+  };
+  const removeVitals = (indexToRemove: number) => {
+    setVitals((params) => {
+      return params.filter((_, index) => index !== indexToRemove);
+    });
+  };
+  const handleVitalsChange = (index: number, field: string, value: string) => {
+    const updatedVitals = [...vitals];
+    updatedVitals[index][field as keyof (typeof vitals)[0]] = value;
+    setVitals(updatedVitals);
+  };
+
+  //Diagnosis
+  const [diagnosis_history, setDiagnosis] = useState("");
+
+  //Medicine
+  const [medicineData, setMedicineData] = useState([
+    {
+      medicine_name: "",
+      medicine_type: "",
+      dose: "",
+      advice: "",
+      time: "",
+      duration: "",
+    },
+  ]);
+  const handleMedicineChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const updatedMedicine = [...medicineData];
+    updatedMedicine[index][field as keyof (typeof medicineData)[0]] = value;
+    setMedicineData(updatedMedicine);
+  };
+
+  const removeMedicine = (indexToRemove: number) => {
+    setMedicineData((prevMedicineData) =>
+      prevMedicineData.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  const addMedicineData = () => {
+    setMedicineData([
+      ...medicineData,
+      {
+        medicine_name: "",
+        medicine_type: "",
+        dose: "",
+        time: "",
+        duration: "",
+        advice: "",
+      },
+    ]);
+  };
+
+  //General advice
+  const [general_advice, setGeneralAdvice] = useState("");
+  //Referral
+  const [referral, setReferral] = useState("");
+  //Surgery advice
+  const [surgery_advice, setSurgery] = useState("");
+
+  //Page Navigation
+  const [active, setActive] = useState(false);
+
+  //followup date
+
+  const [FollowUpDate, setFollowupDate] = useState("");
+  //followup time
+  const [FollowUpTime, setFollowupTime] = useState("");
+
+  //Test
+  const [test, setTest] = useState([
+    {
+      test_name: "",
+      advice: "",
+    },
+  ]);
+
+  const addNewTest = () => {
+    setTest([...test, { test_name: "", advice: "" }]);
+  };
+  const removeTest = (i: number) => {
+    setTest((data) => data.filter((_, index) => index !== i));
+  };
+  const handleTestChange = (index: number, field: string, value: string) => {
+    const updatedTest = [...test];
+    updatedTest[index][field as keyof (typeof test)[0]] = value;
+    setTest(updatedTest);
+  };
+
+  const componentRef = useRef(null);
+
+  return (
+    <main className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
+      <ReactToPrint
+        trigger={() => (
+          <button className="rounded-md p-2 pl-6 pr-6 bg-red-500 text-white font-semibold">
+            print
+          </button>
+        )}
+        content={() => componentRef.current}
+      />
+      {active === true && (
+        <div className="p-5" ref={componentRef}>
+          <Header handlePrint={handlePrint} />
+          <CustomerData patientData={patientData} />
+          <CaseHistory case_history={case_history} vitals={vitals} />
+          <Diagnosis diagnosis_history={diagnosis_history} test={test} />
+          <MedicineData medicineData={medicineData} />
+          <GeneralAdvice general_advice={general_advice} />
+          <Referral referral={referral} />
+          <NextVisit FollowUpDate={FollowUpDate} FollowUpTime={FollowUpTime} />
+          <SurgeryAdvice surgery_advice={surgery_advice} />
+        </div>
+      )}
+
+      {active === true && (
+        <div className="flex flex-row justify-between">
+          <div className=" ">
+            <button
+              onClick={() => setActive(false)}
+              className="m-2 p-2 pl-6 pr-6 bg-blue-500 text-white font-semibold"
+            >
+              EDIT
+            </button>
+
+            <button
+              className="p-2 pl-6 pr-6 bg-red-500 text-white font-semibold"
+              onClick={CreatePrescription}
+            >
+              SAVE
+            </button>
+          </div>
+          <div className="">
+            <button
+              onClick={SendCustomerData}
+              className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
+            >
+              Bill
+            </button>
+          </div>
+        </div>
+      )}
+      {active === false && (
+        <div>
+          <div id="customer" className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <label htmlFor="patient_name" className="mb-1">
+                Patient Name
+              </label>
+              <input
+                type="text"
+                name="patient_name"
+                className="border-2 border-gray-300 rounded-md"
+                value={patientData.patient_name}
+                onChange={(e) =>
+                  setPatientData({
+                    ...patientData,
+                    patient_name: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="phone_number" className="mb-1">
+                Phone number
+              </label>
+              <input
+                type="text"
+                name="phone_number"
+                className="border-2 border-gray-300 rounded-md"
+                value={patientData.phone_number}
+                onChange={(e) =>
+                  setPatientData({
+                    ...patientData,
+                    phone_number: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="flex">
+              <label htmlFor="patient_gender" className="mb-1">
+                Patient Gender
+              </label>
+              <select
+                name="patient_gender"
+                className="border-2 border-gray-300 rounded-md ml-2 mr-2"
+                value={patientData.gender}
+                onChange={(e) =>
+                  setPatientData({ ...patientData, gender: e.target.value })
+                }
+              >
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div className="flex ">
+              <label htmlFor="patient_gender" className="mb-1">
+                Patient Age
+              </label>
+              <input
+                type="number"
+                name="patient_age"
+                className="border-2 border-gray-300 rounded-md ml-2 mr-2"
+                value={patientData.age}
+                onChange={(e) =>
+                  setPatientData({
+                    ...patientData,
+                    age: parseInt(e.target.value),
+                  })
+                }
+              />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="chief_complains">Chief Complains</label>
+            <textarea
+              name="message"
+              id="message"
+              className="border-2 border-gray-400 resize-y w-full min-h-24  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+              value={case_history}
+              onChange={(e) => setComplains(e.target.value)}
+            ></textarea>
+            <p>systematic_history</p>
+
+            <div>
+              {vitals.map((vital, index) => (
+                <div key={index} className="flex mb-2">
+                  <label htmlFor={`vitals_name_${index}`}>Vitals name</label>
+                  <input
+                    type="text"
+                    name={`vites_name${index}`}
+                    value={vital.vites_name}
+                    onChange={(e) =>
+                      handleVitalsChange(index, "vites_name", e.target.value)
+                    }
+                    className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                  />
+                  <label htmlFor={`result_${index}`}>Result</label>
+                  <input
+                    type="text"
+                    name={`vite_result${index}`}
+                    value={vital.vite_result}
+                    onChange={(e) =>
+                      handleVitalsChange(index, "vite_result", e.target.value)
+                    }
+                    className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                  />
+                  <FaPlusCircle
+                    className="size-4 mr-2 items-center mt-1"
+                    onClick={addVitals}
+                  />
+                  {index > 0 && (
+                    <FaMinusCircle
+                      className="size-4 items-center mt-1"
+                      onClick={() => removeVitals(index)}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label htmlFor="Diagnosis">Diagnosis</label>
+            <textarea
+              name="message"
+              id="message"
+              value={diagnosis_history}
+              className="border-2 border-gray-400 resize-y w-full min-h-16  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+              onChange={(e) => setDiagnosis(e.target.value)}
+            ></textarea>
+          </div>
+          <div>
+            <p>Test </p>
+
+            {test.map((data, i) => (
+              <div key={i} className="flex">
+                <label htmlFor="systematic_history">Test name</label>
+                <input
+                  type="text"
+                  name="test_name"
+                  className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                  value={data.test_name}
+                  onChange={(e) =>
+                    handleTestChange(i, "test_name", e.target.value)
+                  }
+                />
+                <label htmlFor="systematic_history">Message</label>
+                <input
+                  type="text"
+                  name={`advice_${i}`}
+                  className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                  value={data.advice}
+                  onChange={
+                    (e) => handleTestChange(i, "advice", e.target.value) // Changed "message" to "note"
+                  }
+                />
+
+                {i > 0 && (
+                  <FaMinusCircle
+                    className="mt-2 mr-2"
+                    onClick={() => removeTest(i)}
+                  />
+                )}
+                {<FaPlusCircle className="mt-2" onClick={addNewTest} />}
+              </div>
+            ))}
+          </div>
+          <div>
+            <p>Medicine </p>
+            {medicineData.map((data, i) => (
+              <div key={i} className="flex items-center">
+                <div className="flex flex-col">
+                  <label htmlFor={`medicine_name_${i}`}>Medicine name</label>
+                  <input
+                    type="text"
+                    name={`medicine_name_${i}`}
+                    className="border-2 border-gray-400 w-52 ml-2 mr-2"
+                    value={data.medicine_name}
+                    onChange={(e) => {
+                      console.log("====================================");
+                      console.log(e.target.value);
+                      console.log("====================================");
+                      return handleMedicineChange(
+                        i,
+                        "medicine_name",
+                        e.target.value
+                      );
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`type_${i}`}>Type</label>
+                  <input
+                    type="text"
+                    name={`medicine_type_${i}`}
+                    className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                    value={data.medicine_type}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "medicine_type", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`dose_${i}`}>Dose</label>
+                  <input
+                    type="text"
+                    name={`dose_${i}`}
+                    className="border-2 border-gray-400 w-10 ml-2 mr-2"
+                    value={data.dose}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "dose", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`time_${i}`}>Time</label>
+                  <input
+                    type="text"
+                    name={`time_${i}`}
+                    className="border-2 border-gray-400 w-10 ml-2 mr-2"
+                    value={data.time}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "time", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`duration_${i}`}>Duration</label>
+                  <input
+                    type="text"
+                    name={`duration_${i}`}
+                    className="border-2 border-gray-400 w-20 ml-2 mr-2"
+                    value={data.duration}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "duration", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`advice${i}`}>Note</label>
+                  <input
+                    type="text"
+                    name={`advice_${i}`}
+                    className="border-2 border-gray-400 w-34 ml-2"
+                    value={data.advice}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "advice", e.target.value)
+                    }
+                  />
+                </div>
+                {i > 0 && (
+                  <FaMinusCircle
+                    className="mt-5 mr-1"
+                    onClick={() => removeMedicine(i)}
+                  />
+                )}
+                {
+                  <FaPlusCircle
+                    className="mt-5 mr-1"
+                    onClick={addMedicineData}
+                  />
+                }
+              </div>
+            ))}
+          </div>
+          <div>
+            <label htmlFor="chief_complains">General Advice</label>
+            <textarea
+              name="message"
+              id="message"
+              value={general_advice}
+              onChange={(e) => setGeneralAdvice(e.target.value)}
+              className="border-2 border-gray-400 resize-y w-full min-h-16  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+            ></textarea>
+          </div>
+          <div>
+            <label htmlFor="referral">Referral</label>
+            <input
+              type="text"
+              value={referral}
+              onChange={(e) => setReferral(e.target.value)}
+              placeholder="Name of any Doctor or Hospital"
+              className="border-2 border-gray-400 resize-y w-1/2 ml-2 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+            />
+          </div>
+          <div className="mt-2">
+            <label htmlFor="follow_up">Follow up</label>
+            <input
+              value={FollowUpDate}
+              onChange={(e) => setFollowupDate(e.target.value)}
+              type="date"
+              className="border-2 border-black ml-2"
+            />
+
+            <label htmlFor="follow_up_time">Follow up Time</label>
+            <input
+              type="time"
+              id="follow_up_time"
+              name="follow_up_time"
+              className="border-2 border-black ml-2"
+              value={FollowUpTime}
+              onChange={(e) => setFollowupTime(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="chief_complains">Surgery Advice</label>
+            <textarea
+              name="message"
+              value={surgery_advice}
+              onChange={(e) => setSurgery(e.target.value)}
+              id="message"
+              className="border-2 border-gray-400 resize-y w-full min-h-16  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+            ></textarea>
+          </div>
+          <button
+            className="p-2 pl-10 pr-10 bg-blue-500 text-white font-semibold"
+            onClick={() => setActive(true)}
+          >
+            Done
+          </button>
+        </div>
+      )}
+    </main>
+  );
+}

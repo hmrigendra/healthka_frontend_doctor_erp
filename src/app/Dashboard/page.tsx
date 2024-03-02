@@ -19,7 +19,7 @@ export default function MenuCard() {
         </div>
         <div className="grid grid-cols-3 gap-x-8 w-full">
           <div className=" bg-blue-200 text- m-4 mt-8 ml-8 rounded-md cursor-pointer ">
-            <Link href={"/Invoice"}>
+            <Link href="/InvoiceAgain">
               <Heading heading="Add Prescription" color="bg-production-green" />
               <PrescriptionCardBody />
             </Link>

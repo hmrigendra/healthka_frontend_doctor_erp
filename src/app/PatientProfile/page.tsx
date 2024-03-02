@@ -3,7 +3,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { PatientProfileHeader } from "../(Components)/PatientProfile/PatientData";
 import { TableCard } from "../(Components)/TableCard";
-import { PersonalData } from "../(Components)/PersonalData";
 
 interface PatientData {
   id: string;
@@ -19,7 +18,7 @@ interface prescriptionData {
   _id: string;
   prescription_id: String;
   case_history: String;
-  follow_status: String;
+  FollowUpDate: String;
   createdAt: String;
 }
 
