@@ -1,8 +1,8 @@
 "use client";
-import { Box, FormControlLabel, Switch } from "@mui/material";
+import { Box, FormControlLabel, Switch, Avatar } from "@mui/material";
 import { SignUpNav } from "../(Components)/SignupNav";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -72,9 +72,6 @@ export default function SignUp() {
           country: "INDIA",
         }
       );
-      console.log("====================================");
-      console.log(response.data.data.results);
-      console.log("====================================");
 
       if (!response) {
         alert("error while posting data");
@@ -92,6 +89,7 @@ export default function SignUp() {
       alert(error);
     }
   };
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="bg-red-100">

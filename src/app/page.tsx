@@ -16,7 +16,7 @@ import Bill from "./Bill/page";
 export default function Home() {
   return (
     <>
-      <MenuCard />
+      <SignUp />
     </>
   );
 }

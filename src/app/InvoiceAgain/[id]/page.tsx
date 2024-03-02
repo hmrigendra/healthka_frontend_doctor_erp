@@ -1,81 +1,65 @@
 "use client";
-import { CustomerData } from "../(Components)/MainInvoiceComponent/CustomerData";
-import { CaseHistory } from "../(Components)/MainInvoiceComponent/CaseHistory";
-import { Header } from "../(Components)/MainInvoiceComponent/Header";
-import { Diagnosis } from "../(Components)/MainInvoiceComponent/Diagnosis";
-import { MedicineData } from "../(Components)/MainInvoiceComponent/MedicineData";
-import { GeneralAdvice } from "../(Components)/MainInvoiceComponent/GeneralAdvice";
-import { Referral } from "../(Components)/MainInvoiceComponent/Referral";
-import { NextVisit } from "../(Components)/MainInvoiceComponent/NextVisit";
-import { SurgeryAdvice } from "../(Components)/MainInvoiceComponent/SurgeryAdvice";
 import { useState, useRef, useEffect } from "react";
 import { FaMinusCircle } from "react-icons/fa";
-
 import { FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
 import ReactToPrint from "react-to-print";
 import { useRouter } from "next/navigation";
+import { Header } from "@/app/(Components)/MainInvoiceComponent/Header";
+import { CustomerData } from "@/app/(Components)/MainInvoiceComponent/CustomerData";
+import { CaseHistory } from "@/app/(Components)/MainInvoiceComponent/CaseHistory";
+import { Diagnosis } from "@/app/(Components)/MainInvoiceComponent/Diagnosis";
+import { MedicineData } from "@/app/(Components)/MainInvoiceComponent/MedicineData";
+import { GeneralAdvice } from "@/app/(Components)/MainInvoiceComponent/GeneralAdvice";
+import { Referral } from "@/app/(Components)/MainInvoiceComponent/Referral";
+import { NextVisit } from "@/app/(Components)/MainInvoiceComponent/NextVisit";
+import { SurgeryAdvice } from "@/app/(Components)/MainInvoiceComponent/SurgeryAdvice";
+import ClinicProfile from "../../ClinicProfile/page";
 
-export default function InvoicePage() {
-  const CreatePrescription = async () => {
+export default function InvoicePage({ params }: any) {
+  const getData = async () => {
     try {
-      console.log("Data being sent:", {
-        patient_name: patientData.patient_name,
-        phone_number: patientData.phone_number,
-        age: patientData.age,
-        gender: patientData.gender,
-        case_history: case_history,
-        vitals: vitals,
-        diagnosis: test,
-        diagnosis_history: diagnosis_history,
-        medicine: medicineData,
-        general_advice: general_advice,
-        referral: referral,
-        surgery_advice: surgery_advice,
-        follow_up_date: FollowUpDate,
-        follow_up_time: FollowUpTime,
-      });
       const response = await axios.post(
-        "http://localhost:8000/api/v1/records/create_prescription",
+        "http://localhost:8000/api/v1/records/get_single_prescription",
         {
-          patient_name: patientData.patient_name,
-          phone_number: patientData.phone_number,
-          age: patientData.age,
-          gender: patientData.gender,
-          case_history: case_history,
-          vitals: vitals,
-          diagnosis: test,
-          diagnosis_history: diagnosis_history,
-          medicine: medicineData,
-          general_advice: general_advice,
-          referral: referral,
-          surgery_advice: surgery_advice,
-          FollowUpTime: FollowUpTime,
-          FollowUpDate: FollowUpDate,
+          prescription_id: params.id,
         },
-
         {
           withCredentials: true,
         }
       );
-      console.log("Data being sent:", {
-        patientData: patientData,
-        case_history: case_history,
-        vitals: vitals,
-        diagnosis_history: diagnosis_history,
-        medicineData: medicineData,
-        general_advice: general_advice,
-        referral: referral,
-        surgery_advice: surgery_advice,
-        FollowUpDate: FollowUpDate,
-        FollowUpTime: FollowUpTime,
-        test: test,
+      if (!response) {
+        alert("Server Error , Something went wrong");
+        console.log(response);
+      } else {
+        console.log(response);
+      }
+
+      const prescriptionData = response.data.data;
+
+      setPatientData({
+        patient_name: prescriptionData.patient_name,
+        phone_number: prescriptionData.phone_number,
+        age: prescriptionData.age,
+        gender: prescriptionData.gender,
       });
+      setComplains(prescriptionData.case_history);
+      setDiagnosis(prescriptionData.diagnosis_history);
+      setGeneralAdvice(prescriptionData.general_advice);
+      setReferral(prescriptionData.referral);
+      setSurgery(prescriptionData.surgery_advice);
+      setFollowupDate(prescriptionData.FollowUpDate);
+      setFollowupTime(prescriptionData.FollowUpTime);
+      setTest(prescriptionData.diagnosis);
+      setVitals(prescriptionData.vitals);
+      setMedicineData(prescriptionData.medicine);
+
+      // Handle response here
     } catch (error) {
-      // Handle errors here
-      console.error("Error creating prescription:", error);
+      console.log(error);
     }
   };
+
   const Router = useRouter();
   const SendCustomerData = () => {
     Router.push(`/Bill?customer_name=${patientData.patient_name}&number=${patientData.phone_number}
@@ -88,6 +72,8 @@ export default function InvoicePage() {
 
   //Use State division for data
 
+  //Doctors
+
   //Customer
   const [patientData, setPatientData] = useState({
     patient_name: "",
@@ -95,50 +81,6 @@ export default function InvoicePage() {
     age: 0,
     gender: "",
   });
-
-  const [doctorData, setDoctorData] = useState({
-    first_name: "",
-    second_name: "",
-    phone_number: "",
-    email: "",
-    qualification: "",
-    specialization: "",
-  });
-  const [clinicAddress, setClinicAddress] = useState({
-    house_number: "",
-    lane: "",
-    address_one: "",
-    landmark: "",
-    city: "",
-    state: "",
-    pincode: "",
-    country: "",
-    clinic_id: "",
-  });
-  interface ClinicProfile {
-    clinic_name: string;
-    clinic_phone_number: string;
-    working_days: string;
-    start_time: string;
-    end_time: string;
-  }
-
-  const [clinicData, setClinicData] = useState<ClinicProfile>({
-    clinic_name: "",
-    clinic_phone_number: "",
-    working_days: "",
-    start_time: "",
-    end_time: "",
-  });
-
-  // const storedDoctorData = JSON.parse(localStorage.getItem("doctor") || "{}");
-  // const storedClinicAddress = JSON.parse(
-  //   localStorage.getItem("clinicAddress") || "{}"
-  // );
-  // const storedClinicData = JSON.parse(localStorage.getItem("clinic") || "{}");
-
-  // setClinicAddress(storedClinicAddress);
-  // setClinicData(storedClinicData);
 
   //Complains
   const [case_history, setComplains] = useState("");
@@ -217,7 +159,7 @@ export default function InvoicePage() {
   const [surgery_advice, setSurgery] = useState("");
 
   //Page Navigation
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
 
   //followup date
 
@@ -245,46 +187,10 @@ export default function InvoicePage() {
     setTest(updatedTest);
   };
 
-  const componentRef = useRef(null);
-
   useEffect(() => {
-    const storedDoctorData = JSON.parse(localStorage.getItem("doctor") || "{}");
-    const storedClinicAddress = JSON.parse(
-      localStorage.getItem("clinicAddress") || "{}"
-    );
-    const storedClinicData = JSON.parse(localStorage.getItem("clinic") || "{}");
-
-    console.log(storedDoctorData);
-    console.log(storedDoctorData[0].first_name);
-
-    setDoctorData({
-      first_name: storedDoctorData[0].first_name,
-      second_name: storedDoctorData[0].second_name,
-      phone_number: storedDoctorData[0].phone_number,
-      email: storedDoctorData[0].email,
-      qualification: storedDoctorData[0].email,
-      specialization: storedDoctorData[0].specialization,
-    });
-
-    setClinicAddress({
-      house_number: storedClinicAddress[0].house_number,
-      lane: storedClinicAddress[0].lane,
-      address_one: storedClinicAddress[0].address_one,
-      landmark: storedClinicAddress[0].landmark,
-      city: storedClinicAddress[0].city,
-      state: storedClinicAddress[0].state,
-      pincode: storedClinicAddress[0].pincode,
-      country: storedClinicAddress[0].country,
-      clinic_id: storedClinicAddress[0].clinic_id,
-    });
-    setClinicData({
-      clinic_name: storedClinicData[0].clinic_name,
-      clinic_phone_number: storedClinicData[0].clinic_phone_number,
-      working_days: storedClinicData[0].working_days,
-      start_time: storedClinicData[0].start_time,
-      end_time: storedClinicData[0].end_time,
-    });
+    const serverData = getData();
   }, []);
+  const componentRef = useRef(null);
 
   return (
     <main className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
@@ -298,11 +204,7 @@ export default function InvoicePage() {
       />
       {active === true && (
         <div className="p-5" ref={componentRef}>
-          <Header
-            doctorData={doctorData}
-            clinicAddress={clinicAddress}
-            clinicData={clinicData}
-          />
+          <Header />
           <CustomerData patientData={patientData} />
           <CaseHistory case_history={case_history} vitals={vitals} />
           <Diagnosis diagnosis_history={diagnosis_history} test={test} />
@@ -316,21 +218,6 @@ export default function InvoicePage() {
 
       {active === true && (
         <div className="flex flex-row justify-between">
-          <div className=" ">
-            <button
-              onClick={() => setActive(false)}
-              className="m-2 p-2 pl-6 pr-6 bg-blue-500 text-white font-semibold"
-            >
-              EDIT
-            </button>
-
-            <button
-              className="p-2 pl-6 pr-6 bg-red-500 text-white font-semibold"
-              onClick={CreatePrescription}
-            >
-              SAVE
-            </button>
-          </div>
           <div className="">
             <button
               onClick={SendCustomerData}

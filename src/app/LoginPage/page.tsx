@@ -30,6 +30,12 @@ export default function LoginPage() {
 
       router.push("/Dashboard");
       console.log(response.data);
+      localStorage.setItem("doctor", JSON.stringify(response.data.doctorData));
+      localStorage.setItem(
+        "clinicAddress",
+        JSON.stringify(response.data.clinicAddress)
+      );
+      localStorage.setItem("clinic", JSON.stringify(response.data.clinicData));
     } catch (error) {
       // Handle login error
       console.error("Login failed:", error);

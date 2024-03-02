@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface PrescriptionData {
   _id: String;
   prescription_id: String;
@@ -51,9 +53,11 @@ export function TableCard({ prescriptions }: TableCardProps) {
                 </td>
 
                 <p className="border-2 border-black"></p>
-                <td className="flex justify-center items-center min-w-40 text-sm pr-2">
-                  Open Prescription
-                </td>
+                <Link href={`/InvoiceAgain/${data.prescription_id}`}>
+                  <td className="flex justify-center items-center min-w-40 text-sm pr-2">
+                    Open Prescription
+                  </td>
+                </Link>
               </tr>
             </tbody>
           </table>
