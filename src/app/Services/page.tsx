@@ -49,7 +49,7 @@ export default function Services() {
       for (const data of serviceInputs) {
         // Send each item individually to the backend
         const response = await axios.post(
-          "http://localhost:8000/api/v1/services/create_new_service",
+          "http://15.207.112.23:8000/api/v1/services/create_new_service",
           data, // Send individual item instead of the whole array
           {
             withCredentials: true,
@@ -70,7 +70,7 @@ export default function Services() {
   const getData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/v1/services/get_services",
+        "http://15.207.112.23:8000/api/v1/services/get_services",
         {
           withCredentials: true,
         }
@@ -88,7 +88,7 @@ export default function Services() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/services/delete_service",
+        "http://15.207.112.23:8000/api/v1/services/delete_service",
         {
           service_id: service_id, // Send service_id as part of an object
         },

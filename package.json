@@ -15,6 +15,8 @@
     "@mui/material": "^5.15.6",
     "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "js-cookie": "^3.0.5",
     "next": "^14.1.0",
     "react": "^18.2.0",
     "react-datepicker": "^6.1.0",
@@ -29,6 +31,7 @@
     "swiper": "^11.0.5"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.11.8",
     "@types/react": "^18",
     "@types/react-dom": "^18",

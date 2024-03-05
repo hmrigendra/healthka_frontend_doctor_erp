@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -23,12 +24,14 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/doctors/login",
+        "http://15.207.112.23:8000/api/v1/doctors/login",
         loginInfo,
         { withCredentials: true } // Include this option to send cookies with the request
       );
 
-      router.push("/Dashboard");
+      if (response.data.apiSuccess === 1) {
+        router.push("/Dashboard");
+      }
       console.log(response.data);
       localStorage.setItem("doctor", JSON.stringify(response.data.doctorData));
       localStorage.setItem(
@@ -43,56 +46,69 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen items-center justify-between flex  bg-gradient-to-r from-red-500 to-gray-400">
-      <div className="items-center m-36">
-        <Image
-          src="/doctor.avif"
-          width={300}
-          height={100}
-          alt="Doctor Image"
-          className=""
-        />
-      </div>
-      <div className="m-40 bg-white w-[20%] h-[45%] rounded-md">
-        <div className="item-center flex flex-col align-middle justify-center">
-          <div className="items-center flex justify-center">
-            <p className="text-lg font-bold m-2">HealthKa</p>
-          </div>
+    <div className="h-screen items-center justify-center flex  bg-gradient-to-r from-red-400 to-blue-200">
+      <div className=" bg-white w-[55%] h-[50%] rounded-md">
+        <div className=" flex justify-center">
+          <table className="w-[90%]">
+            <tbody>
+              <tr>
+                <td rowSpan={3}>
+                  <Image
+                    src="/doctor.avif"
+                    width={320}
+                    height={1}
+                    alt="Doctor Image"
+                  />
+                </td>
 
-          <div className="flex flex-col">
-            <input
-              type="text"
-              placeholder="User Id or Phone number"
-              onChange={handleChange}
-              value={loginInfo.doctor_id}
-              name="doctor_id"
-              className="m-2 ml-4 mr-4 p-2  bg-gray-200 rounded-md font-semibold placeholder:text-gray-600"
-            />
-            <input
-              type="password"
-              placeholder="password"
-              className="m-2 p-2 ml-4 mr-4 bg-gray-200 rounded-md font-semibold placeholder:text-gray-600 "
-              name="password"
-              onChange={handleChange}
-              value={loginInfo.password}
-            />
-          </div>
-          <div className="flex justify-end m-2 mb-3">
-            <p className="text-blue-600 border-b font-semibold  ">
-              forget Password
-            </p>
-          </div>
-          <div className="flex flex-col">
-            <button
-              className="mb-2 ml-2 mr-2 rounded-lg text-lg font-semibold bg-production-green p-2 text-production-white2 hover:text-black"
-              onClick={handleLogin}
-            >
-              Login
-            </button>
-            <button className="mb-2 ml-2 mr-2 rounded-lg text-lg font-semibold text-white bg-blue-400 p-2 border border-blue-400 hover:text-black hover:bg-blue-200">
-              Sign Up
-            </button>
-          </div>
+                <td className="flex justify-center">
+                  <p className="text-lg font-bold mt-5 mb-4">HealthKa</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      placeholder="User Id or Phone number"
+                      onChange={handleChange}
+                      value={loginInfo.doctor_id}
+                      name="doctor_id"
+                      className=" p-2 m-1 w-full  bg-gray-200 rounded-md font-semibold placeholder:text-gray-600"
+                    />
+                    <input
+                      type="password"
+                      placeholder="password"
+                      className="p-2 m-1 bg-gray-200 w-full  rounded-md font-semibold placeholder:text-gray-600 "
+                      name="password"
+                      onChange={handleChange}
+                      value={loginInfo.password}
+                    />
+                  </div>
+                  <div className="flex justify-end mb-3">
+                    <p className="text-blue-600 border-b ">Forgot password</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div className="flex flex-col">
+                    <button
+                      className="mb-2 ml-2 mr-2 rounded-lg text-lg w-full font-semibold bg-production-green p-2 text-production-white2 hover:text-black"
+                      onClick={handleLogin}
+                    >
+                      Login
+                    </button>
+                    <Link href={"/signup"}>
+                      <button className=" ml-2 mr-2 rounded-lg w-full text-lg font-semibold text-white bg-blue-400 p-2 border border-blue-400 hover:text-black hover:bg-blue-200">
+                        Sign Up
+                      </button>
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

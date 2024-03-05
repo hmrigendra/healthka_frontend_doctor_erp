@@ -41,7 +41,7 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
     <div className="w-full">
       <table className="bg-production-white rounded-md w-full ">
         <thead className="">
-          <tr className="flex gap-x-24 p-2 items-center justify-evenly">
+          <tr className="flex gap-x-20 pt-2 pb-2 items-center justify-evenly">
             <th className="">Profile</th>
             <th>{header1}</th>
             <th>{header2}</th>
@@ -66,9 +66,8 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
               key={index}
             >
               <tbody>
-                <tr className="flex gap-x-20 p-2  items-center justify-evenly">
-                  <td className="min-w-6 ">
-                    {" "}
+                <tr className="flex  p-2   items-center justify-around">
+                  <td className="min-w-6  ">
                     <Avatar
                       sx={{
                         width: 35,
@@ -81,7 +80,7 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
                   <td className=" max-w-28 overflow-hidden text-sm font-semibold whitespace-nowrap truncate">
                     {patient.patient_id}
                   </td>
-                  <td className="">{patient.patient_name}</td>
+                  <td className="pl-10">{patient.patient_name}</td>
                   <td className="max-w-[115px] overflow-hidden whitespace-nowrap truncate">
                     {patient.phone_number?.toString()}
                   </td>

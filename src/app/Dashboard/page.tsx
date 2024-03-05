@@ -14,7 +14,7 @@ export default function MenuCard() {
       <div className="flex flex-col w-full min-h-screen bg-production-white2">
         <div className="w-full">
           <div>
-            <SearchBar placeholder="somedata" />
+            <SearchBar placeholder="Search..." />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-x-8 w-full">

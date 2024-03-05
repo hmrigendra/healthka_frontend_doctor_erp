@@ -36,7 +36,7 @@ export default function InvoicePage() {
         follow_up_time: FollowUpTime,
       });
       const response = await axios.post(
-        "http://localhost:8000/api/v1/records/create_prescription",
+        "http://15.207.112.23:8000/api/v1/records/create_prescription",
         {
           patient_name: patientData.patient_name,
           phone_number: patientData.phone_number,

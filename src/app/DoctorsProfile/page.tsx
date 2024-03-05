@@ -65,7 +65,7 @@ export default function DoctorsProfile() {
   const fetchData = async () => {
     try {
       const response = await axios.get<ApiResponse>(
-        "http://localhost:8000/api/v1/doctors/get_clinic_doctors",
+        "http://15.207.112.23:8000/api/v1/doctors/get_clinic_doctors",
         {
           withCredentials: true,
         }

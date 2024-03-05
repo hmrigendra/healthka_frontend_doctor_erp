@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Header } from "../(Components)/MainInvoiceComponent/Header";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import ReactToPrint from "react-to-print";
@@ -45,6 +45,95 @@ export default function Bill() {
   };
   const componentRef = useRef(null);
 
+  //doctor Data
+  const [doctorData, setDoctorData] = useState({
+    first_name: "",
+    second_name: "",
+    phone_number: "",
+    email: "",
+    qualification: "",
+    specialization: "",
+  });
+  const [clinicAddress, setClinicAddress] = useState({
+    house_number: "",
+    lane: "",
+    address_one: "",
+    landmark: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    clinic_id: "",
+  });
+  interface ClinicProfile {
+    clinic_name: string;
+    clinic_phone_number: string;
+    working_days: string;
+    start_time: string;
+    end_time: string;
+  }
+
+  const [clinicData, setClinicData] = useState<ClinicProfile>({
+    clinic_name: "",
+    clinic_phone_number: "",
+    working_days: "",
+    start_time: "",
+    end_time: "",
+  });
+  const outPut = () => {
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}/${
+      currentDate.getMonth() + 1
+    }/${currentDate.getFullYear()}`;
+    return formattedDate;
+  };
+  const TimeOutPut = () => {
+    const currentDate = new Date();
+    const formattedTime = `${currentDate.getHours()}:${currentDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+
+    return formattedTime;
+  };
+  useEffect(() => {
+    const storedDoctorData = JSON.parse(localStorage.getItem("doctor") || "{}");
+    const storedClinicAddress = JSON.parse(
+      localStorage.getItem("clinicAddress") || "{}"
+    );
+    const storedClinicData = JSON.parse(localStorage.getItem("clinic") || "{}");
+
+    console.log(storedDoctorData);
+    console.log(storedDoctorData[0].first_name);
+
+    setDoctorData({
+      first_name: storedDoctorData[0].first_name,
+      second_name: storedDoctorData[0].second_name,
+      phone_number: storedDoctorData[0].phone_number,
+      email: storedDoctorData[0].email,
+      qualification: storedDoctorData[0].email,
+      specialization: storedDoctorData[0].specialization,
+    });
+
+    setClinicAddress({
+      house_number: storedClinicAddress[0].house_number,
+      lane: storedClinicAddress[0].lane,
+      address_one: storedClinicAddress[0].address_one,
+      landmark: storedClinicAddress[0].landmark,
+      city: storedClinicAddress[0].city,
+      state: storedClinicAddress[0].state,
+      pincode: storedClinicAddress[0].pincode,
+      country: storedClinicAddress[0].country,
+      clinic_id: storedClinicAddress[0].clinic_id,
+    });
+    setClinicData({
+      clinic_name: storedClinicData[0].clinic_name,
+      clinic_phone_number: storedClinicData[0].clinic_phone_number,
+      working_days: storedClinicData[0].working_days,
+      start_time: storedClinicData[0].start_time,
+      end_time: storedClinicData[0].end_time,
+    });
+  }, []);
   return (
     <main className="h-screen md:max-w-xl md:mx-auto xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
       <ReactToPrint
@@ -54,8 +143,12 @@ export default function Bill() {
       {edit && (
         <div ref={componentRef} className="p-10">
           <div className="flex flex-col min-h-[85vh]">
-            <Header />
-            <div className="flex justify-between p-1 border-b-2 border-black">
+            <Header
+              doctorData={doctorData}
+              clinicAddress={clinicAddress}
+              clinicData={clinicData}
+            />
+            <div className="flex justify-between p-3 border-b-2 border-black">
               <div>
                 <p>Name : {name}</p>
                 <p>Phone NO: {number}</p>
@@ -63,6 +156,10 @@ export default function Bill() {
               <div>
                 <p>Age :{age}</p>
                 <p>Gender :{gender}</p>
+              </div>
+              <div>
+                <p>Date:{outPut()}</p>
+                <p>TIme:{TimeOutPut()}</p>
               </div>
             </div>
             <div className="flex justify-center mb-1">

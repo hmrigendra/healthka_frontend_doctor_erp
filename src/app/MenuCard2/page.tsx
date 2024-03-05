@@ -13,7 +13,7 @@ export default function Table2() {
       <div className="flex flex-col w-full min-h-screen ">
         <div className="w-full p-4">
           <div>
-            <SearchBar placeholder="somedata" />
+            <SearchBar placeholder="Search..." />
             <div className="p-6">
               <div className="bg-production-indigo mt-5 flex items-center rounded-lg justify-between ">
                 <h1 className="pl-4 font-bold text-lg">Records List</h1>

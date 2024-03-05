@@ -9,14 +9,14 @@ import Services from "./Services/page";
 import Appointment from "./FollowupsChart/page";
 import MenuCard from "./Dashboard/page";
 import Login from "./LoginPage/page";
-import SignUp from "./Signup/page";
+import SignUp from "./signup/page";
 import InvoicePage from "./InvoiceAgain/page";
 import Bill from "./Bill/page";
 
 export default function Home() {
   return (
     <>
-      <SignUp />
+      <Login />
     </>
   );
 }

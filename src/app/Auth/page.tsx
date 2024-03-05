@@ -20,7 +20,7 @@ export default function Auth() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/doctors/authentication",
+        "http://15.207.112.23:8000/api/v1/doctors/authentication",
         {
           doctor_id: doctor_id,
           phone_number: auth.phone_number,

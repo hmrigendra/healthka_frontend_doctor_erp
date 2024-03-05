@@ -54,7 +54,7 @@ export function DoctorProfileBody({
               <FaClinicMedical className="size-10 ml-1 mr-2" />
               <p className="line-clamp-3">{clinic.clinic_name}</p>
             </div>
-            <div className="flex flex-col w-[250px] text-md font-semibold text-indigo-900 items-center">
+            <div className="flex flex-col max-w-[300px] text-md font-semibold text-indigo-900 items-center">
               <p>{clinic.timing}</p>
               <div className="flex gap-2">
                 <p>M</p>
@@ -68,7 +68,7 @@ export function DoctorProfileBody({
             </div>
             {addressData.map((data) => (
               <div key={data.address_id} className="items-center">
-                <p className="font-semibold line-clamp-2 items-center max-w-[200px] overflow-hidden text-indigo-900">
+                <p className="font-semibold line-clamp-1   items-center max-w-[150px] overflow-hidden text-indigo-900">
                   {data.house_number},{data.lane},{data.address_one},
                   {data.landmark},{data.city},{data.state},{data.pincode},
                   {data.country}
