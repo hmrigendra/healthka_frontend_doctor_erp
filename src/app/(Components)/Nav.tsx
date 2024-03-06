@@ -27,7 +27,7 @@ export function Nav() {
   const logout = async () => {
     try {
       const response = await axios.post(
-        "http://15.207.112.23:8000/api/v1/doctors/logout",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/logout`,
         {},
         {
           withCredentials: true,
