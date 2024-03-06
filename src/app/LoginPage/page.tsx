@@ -25,7 +25,10 @@ export default function LoginPage() {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/login`,
-        loginInfo
+        loginInfo,
+        {
+          withCredentials: true,
+        }
       );
 
       router.push("/Dashboard");

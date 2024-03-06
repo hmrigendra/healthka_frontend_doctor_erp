@@ -9,7 +9,7 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     age: Number;
     created_at: Date;
     doctor_id: String;
-    id: String;
+    _id: String;
     patient_id: String;
     patient_name: String;
     phone_number: String;
@@ -25,7 +25,9 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
           withCredentials: true, // Include credentials (cookies) in the request
         }
       );
-
+      console.log("====================================");
+      console.log(response.data.data);
+      console.log("====================================");
       setPatients(response.data.data);
     } catch (error: any) {
       if (error.response) {
@@ -83,9 +85,9 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
                   <td className="">{patient.phone_number}</td>
                   <td className="max-w-[115px]  overflow-hidden whitespace-nowrap truncate">
                     {/* Assuming you have a reasonOfVisit property in your patient data */}
-                    {patient.created_at.toString()}
+                    {patient.created_at.toLocaleString()}
                   </td>
-                  <td className="truncate max-w-[155px] ">{patient.id}</td>
+                  <td className="truncate max-w-[155px] ">{patient._id}</td>
                 </tr>
               </tbody>
             </table>
