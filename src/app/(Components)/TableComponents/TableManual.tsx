@@ -20,7 +20,7 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     try {
       // Fetch data from server-side endpoint
       const response = await axios.get(
-        "http://15.207.112.23:8000/api/v1/patient/get_all_patient",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/patient/get_all_patient`,
         {
           withCredentials: true, // Include credentials (cookies) in the request
         }

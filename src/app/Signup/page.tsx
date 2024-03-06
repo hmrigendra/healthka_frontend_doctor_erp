@@ -47,7 +47,7 @@ export default function SignUp() {
   const doctor_profile = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/doctors/create-doctor-profile",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/create-doctor-profile`,
         {
           first_name: doctorProfile.first_name,
           last_name: doctorProfile.last_name,

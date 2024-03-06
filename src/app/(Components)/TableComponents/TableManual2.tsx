@@ -19,7 +19,7 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
   const fetchPatients = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/v1/records/get_prescription",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/get_prescription`,
         {
           withCredentials: true,
         }

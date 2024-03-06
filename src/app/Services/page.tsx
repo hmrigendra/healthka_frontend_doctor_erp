@@ -49,7 +49,7 @@ export default function Services() {
       for (const data of serviceInputs) {
         // Send each item individually to the backend
         const response = await axios.post(
-          "http://15.207.112.23:8000/api/v1/services/create_new_service",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/create_new_service`,
           data, // Send individual item instead of the whole array
           {
             withCredentials: true,

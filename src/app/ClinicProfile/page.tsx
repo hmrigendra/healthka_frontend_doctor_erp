@@ -37,7 +37,7 @@ export default function ClinicProfile() {
       console.log(doctor_id);
 
       const response = await axios.post(
-        "http://localhost:8000/api/v1/doctors/add_clinic",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/add_clinic`,
         {
           clinic_name: clinic.clinic_name,
           start_time: clinic.start_time,

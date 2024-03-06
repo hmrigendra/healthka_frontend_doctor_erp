@@ -20,7 +20,7 @@ export default function InvoicePage({ params }: any) {
   const getData = async () => {
     try {
       const response = await axios.post(
-        "http://15.207.112.23:8000/api/v1/records/get_single_prescription",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/get_single_prescription`,
         {
           prescription_id: params.id,
         },

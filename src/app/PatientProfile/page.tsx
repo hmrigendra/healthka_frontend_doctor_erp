@@ -49,7 +49,7 @@ export default function PatientProfile({
   const fetchData = async () => {
     try {
       const response = await axios.get<ApiResponse>(
-        `http://localhost:8000/api/v1/patient/get_patient_by_doctor_id?patient_id=${searchParams.patient_id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/patient/get_patient_by_doctor_id?patient_id=${searchParams.patient_id}`,
         {
           withCredentials: true,
         }

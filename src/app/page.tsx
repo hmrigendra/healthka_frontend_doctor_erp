@@ -12,11 +12,13 @@ import Login from "./LoginPage/page";
 import SignUp from "./signup/page";
 import InvoicePage from "./InvoiceAgain/page";
 import Bill from "./Bill/page";
+import dotenv from "dotenv";
 
+dotenv.config();
 export default function Home() {
   return (
     <>
-      <Login />
+      <MenuCard />
     </>
   );
 }

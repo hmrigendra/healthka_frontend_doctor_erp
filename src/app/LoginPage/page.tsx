@@ -24,14 +24,11 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://15.207.112.23:8000/api/v1/doctors/login",
-        loginInfo,
-        { withCredentials: true } // Include this option to send cookies with the request
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/login`,
+        loginInfo
       );
 
-      if (response.data.apiSuccess === 1) {
-        router.push("/Dashboard");
-      }
+      router.push("/Dashboard");
       console.log(response.data);
       localStorage.setItem("doctor", JSON.stringify(response.data.doctorData));
       localStorage.setItem(
