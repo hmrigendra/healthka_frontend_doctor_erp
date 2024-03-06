@@ -33,5 +33,6 @@ export const config = {
     "/Signup",
     "/Auth",
     "/ClinicProfile",
+    "/",
   ],
 };

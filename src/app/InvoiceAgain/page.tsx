@@ -19,22 +19,20 @@ import { useRouter } from "next/navigation";
 export default function InvoicePage() {
   const CreatePrescription = async () => {
     try {
-      console.log("Data being sent:", {
-        patient_name: patientData.patient_name,
-        phone_number: patientData.phone_number,
-        age: patientData.age,
-        gender: patientData.gender,
-        case_history: case_history,
-        vitals: vitals,
-        diagnosis: test,
-        diagnosis_history: diagnosis_history,
-        medicine: medicineData,
-        general_advice: general_advice,
-        referral: referral,
-        surgery_advice: surgery_advice,
-        follow_up_date: FollowUpDate,
-        follow_up_time: FollowUpTime,
-      });
+      const outPut = () => {
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate()}/${
+          currentDate.getMonth() + 1
+        }/${currentDate.getFullYear()}`;
+        return formattedDate;
+      };
+      const realData = outPut();
+      const TimeOutPut = () => {
+        const currentDate = new Date();
+        const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+        return formattedTime;
+      };
+      const realTime = TimeOutPut();
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/create_prescription`,
         {
@@ -52,6 +50,8 @@ export default function InvoicePage() {
           surgery_advice: surgery_advice,
           FollowUpTime: FollowUpTime,
           FollowUpDate: FollowUpDate,
+          prescription_date: realData,
+          prescription_time: realTime,
         },
 
         {
@@ -80,10 +80,6 @@ export default function InvoicePage() {
   const SendCustomerData = () => {
     Router.push(`/Bill?customer_name=${patientData.patient_name}&number=${patientData.phone_number}
     &age=${patientData.age}&gender=${patientData.gender}`);
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   //Use State division for data
@@ -247,6 +243,67 @@ export default function InvoicePage() {
 
   const componentRef = useRef(null);
 
+  const handlePatientData = (e: any) => {
+    const name = e.target.name; // Use e.target.name to get the name of the input field
+    const value = e.target.value;
+
+    setPatientData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const [apiPatientData, setApiPatientData] = useState([
+    {
+      patient_name: "",
+      phone_number: "",
+      age: 0,
+      gender: "",
+    },
+  ]);
+
+  const predictionApi = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/prediction/prediction",
+        {
+          phone_number: patientData.phone_number,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setApiPatientData(response.data.result);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (patientData.phone_number && patientData.phone_number.length > 4) {
+      predictionApi();
+    }
+  }, [patientData.phone_number]);
+
+  const selecTedData = (selectedNumber: string, shouldCallApi: boolean) => {
+    return () => {
+      const selectedData = apiPatientData.find(
+        (data) => data.phone_number === selectedNumber
+      );
+
+      if (selectedData) {
+        setPatientData(selectedData);
+        if (shouldCallApi) {
+          // Call the prediction API only if shouldCallApi is true
+          predictionApi();
+        }
+        setApiPatientData([]);
+      } else {
+        // Handle the case when no matching data is found
+        console.log("No data found for the selected phone number");
+      }
+    };
+  };
+
   useEffect(() => {
     const storedDoctorData = JSON.parse(localStorage.getItem("doctor") || "{}");
     const storedClinicAddress = JSON.parse(
@@ -353,12 +410,7 @@ export default function InvoicePage() {
                 name="patient_name"
                 className="border-2 border-gray-300 rounded-md"
                 value={patientData.patient_name}
-                onChange={(e) =>
-                  setPatientData({
-                    ...patientData,
-                    patient_name: e.target.value,
-                  })
-                }
+                onChange={handlePatientData}
               />
             </div>
             <div className="flex flex-col">
@@ -370,13 +422,18 @@ export default function InvoicePage() {
                 name="phone_number"
                 className="border-2 border-gray-300 rounded-md"
                 value={patientData.phone_number}
-                onChange={(e) =>
-                  setPatientData({
-                    ...patientData,
-                    phone_number: e.target.value,
-                  })
-                }
+                onChange={handlePatientData}
               />
+              {patientData.phone_number.length > 4 &&
+                apiPatientData.map((data) => (
+                  <span
+                    key={data.phone_number}
+                    onClick={selecTedData(data.phone_number, false)}
+                    className="shadow-lg"
+                  >
+                    {data.phone_number}
+                  </span>
+                ))}
             </div>
             <div className="flex">
               <label htmlFor="patient_gender" className="mb-1">
@@ -385,7 +442,7 @@ export default function InvoicePage() {
               <select
                 name="patient_gender"
                 className="border-2 border-gray-300 rounded-md ml-2 mr-2"
-                value={patientData.gender}
+                value={patientData.gender.toLowerCase()} // Convert gender to lowercase
                 onChange={(e) =>
                   setPatientData({ ...patientData, gender: e.target.value })
                 }
