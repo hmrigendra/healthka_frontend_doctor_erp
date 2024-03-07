@@ -9,6 +9,9 @@ export default function middleware(request: NextRequest) {
     path === "/ClinicProfile";
 
   const token = request.cookies.get("JWT")?.value || "";
+  console.log("====================================");
+  console.log(token);
+  console.log("====================================");
 
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL("/Dashboard", request.nextUrl));

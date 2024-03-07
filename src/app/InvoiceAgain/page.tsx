@@ -279,7 +279,11 @@ export default function InvoicePage() {
   };
 
   useEffect(() => {
-    if (patientData.phone_number && patientData.phone_number.length > 4) {
+    if (
+      patientData.phone_number &&
+      patientData.phone_number.length > 4 &&
+      patientData.phone_number.length < 10
+    ) {
       predictionApi();
     }
   }, [patientData.phone_number]);
