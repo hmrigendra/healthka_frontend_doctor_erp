@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { FaMinusCircle } from "react-icons/fa";
 import { FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
@@ -17,7 +17,7 @@ import { SurgeryAdvice } from "@/app/(Components)/MainInvoiceComponent/SurgeryAd
 import ClinicProfile from "../../ClinicProfile/page";
 
 export default function InvoicePage({ params }: any) {
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/get_single_prescription`,
@@ -58,7 +58,7 @@ export default function InvoicePage({ params }: any) {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [params.id]);
 
   const Router = useRouter();
   const SendCustomerData = () => {
@@ -261,7 +261,7 @@ export default function InvoicePage({ params }: any) {
       start_time: storedClinicData[0].start_time,
       end_time: storedClinicData[0].end_time,
     });
-  }, []);
+  }, [getData]);
   const componentRef = useRef(null);
 
   return (

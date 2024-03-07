@@ -8,7 +8,8 @@ import { GeneralAdvice } from "../(Components)/MainInvoiceComponent/GeneralAdvic
 import { Referral } from "../(Components)/MainInvoiceComponent/Referral";
 import { NextVisit } from "../(Components)/MainInvoiceComponent/NextVisit";
 import { SurgeryAdvice } from "../(Components)/MainInvoiceComponent/SurgeryAdvice";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+
 import { FaMinusCircle } from "react-icons/fa";
 
 import { FaPlusCircle } from "react-icons/fa";
@@ -262,10 +263,10 @@ export default function InvoicePage() {
     },
   ]);
 
-  const predictionApi = async () => {
+  const predictionApi = useCallback(async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/prediction/prediction",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/prediction/prediction`,
         {
           phone_number: patientData.phone_number,
         },
@@ -275,8 +276,10 @@ export default function InvoicePage() {
       );
 
       setApiPatientData(response.data.result);
-    } catch (error) {}
-  };
+    } catch (error) {
+      // Handle errors
+    }
+  }, [patientData.phone_number]);
 
   useEffect(() => {
     if (
@@ -286,7 +289,7 @@ export default function InvoicePage() {
     ) {
       predictionApi();
     }
-  }, [patientData.phone_number]);
+  }, [patientData.phone_number, predictionApi]);
 
   const selecTedData = (selectedNumber: string, shouldCallApi: boolean) => {
     return () => {

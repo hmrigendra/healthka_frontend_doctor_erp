@@ -78,7 +78,7 @@ export default function PatientProfile({
 
   useEffect(() => {
     fetchData();
-  }, [searchParams.patient_id]);
+  }, [searchParams.patient_id, fetchData]);
 
   // Render your component based on the patient data and data length
   // Add patient_id as a dependency to refetch data when it changes
