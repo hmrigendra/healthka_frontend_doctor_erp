@@ -46,39 +46,39 @@ export default function PatientProfile({
     age: 0,
   });
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get<ApiResponse>(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/patient/get_patient_by_doctor_id?patient_id=${searchParams.patient_id}`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      console.log("====================================");
-      console.log(response.data.patientData);
-      console.log("====================================");
-      const responseData = response.data;
-      setDataLength(responseData.dataLength);
-      const [patientData]: any = responseData.patientData; // Destructure the array
-
-      if (patientData) {
-        setPatient(patientData);
-      }
-
-      // Extract the first patient object from the data array
-      if (responseData.data.length > 0) {
-        const patientData = responseData.data;
-        setPrescriptions(patientData);
-      }
-    } catch (error) {
-      console.error("Error fetching patient data:", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get<ApiResponse>(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/patient/get_patient_by_doctor_id?patient_id=${searchParams.patient_id}`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        console.log("====================================");
+        console.log(response.data.patientData);
+        console.log("====================================");
+        const responseData = response.data;
+        setDataLength(responseData.dataLength);
+        const [patientData]: any = responseData.patientData; // Destructure the array
+
+        if (patientData) {
+          setPatient(patientData);
+        }
+
+        // Extract the first patient object from the data array
+        if (responseData.data.length > 0) {
+          const patientData = responseData.data;
+          setPrescriptions(patientData);
+        }
+      } catch (error) {
+        console.error("Error fetching patient data:", error);
+      }
+    };
+
     fetchData();
-  }, [searchParams.patient_id, fetchData]);
+  }, [searchParams.patient_id]);
 
   // Render your component based on the patient data and data length
   // Add patient_id as a dependency to refetch data when it changes
