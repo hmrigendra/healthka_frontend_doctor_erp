@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function ClinicProfile() {
+  console.log("====================================");
+  console.log("test");
+  console.log("====================================");
   const [clinic, setClinic] = useState({
     clinic_name: "",
     start_time: "",
