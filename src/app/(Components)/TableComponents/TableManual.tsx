@@ -16,18 +16,20 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     gender: String;
   }
   const [patients, setPatients] = useState<ResponseData[]>([]);
+  const [length, setLength] = useState(0);
 
   const fetchPatients = async () => {
     try {
       // Fetch data from server-side endpoint
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/patient/get_all_patient`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/patient/get_all_patient?page=${pageNumber}`,
         {
           withCredentials: true, // Include credentials (cookies) in the request
         }
       );
       console.log("====================================");
       console.log(response.data.data[0].created_at);
+      setLength(response.data.nhHits);
 
       console.log("====================================");
       setPatients(response.data.data);
@@ -67,9 +69,17 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     return formattedDate;
   };
 
+  const nPage = Math.ceil(length / 6);
+  console.log("====================================");
+  console.log(nPage);
+  console.log("====================================");
+  const numbers = [...Array(nPage + 1).keys()].slice(1);
+
+  const [pageNumber, setPageNumber] = useState(1);
+
   useEffect(() => {
     fetchPatients();
-  }, []);
+  }, [pageNumber]);
   return (
     <div className="w-full">
       <div>
@@ -112,7 +122,6 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
                   </td>
                   <td className="">{patient.phone_number}</td>
                   <td className="min-w-[50px]  overflow-hidden whitespace-nowrap truncate">
-                    {/* Assuming you have a reasonOfVisit property in your patient data */}
                     {formatDate(patient.created_at.toString())}
                   </td>
                   <td className="items-end flex justify-end min-w-[155px] ">
@@ -124,17 +133,29 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
           </Link>
         ))}
       </div>
-      {/* <div className="shadow-lg m-4 inline-block rounded-lg overflow-hidden">
+      <div className="shadow-lg m-4 inline-block rounded-lg overflow-hidden border-2 border-gray-400">
         <ul className="flex gap-4 items-center justify-center bg-white">
-          <li className="px-4 py-2 text-gray-600 hover:text-gray-900 cursor-pointer">
+          <li className="px-4 py-2 hover:bg-slate-400  text-gray-600 hover:text-gray-900 cursor-pointer">
             Prev
           </li>
-          <li className="px-4 py-2 border-l border-gray-300">1</li>
-          <li className="px-4 py-2 border-l border-gray-300">2</li>
-          <li className="px-4 py-2 border-l border-gray-300">3</li>
-          <li className="px-4 py-2 border-l border-gray-300">Next</li>
+          {numbers.map((n, i) => (
+            <li
+              key={i}
+              className={`px-4 py-2 border-l border-gray-300 ${
+                pageNumber === n
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-slate-400 hover:text-gray-900"
+              }`}
+              onClick={() => setPageNumber(n)}
+            >
+              {n}
+            </li>
+          ))}
+          <li className="px-4 py-2 hover:bg-slate-400  border-l border-gray-300">
+            Next
+          </li>
         </ul>
-      </div> */}
+      </div>
     </div>
   );
 }
