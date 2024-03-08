@@ -30,10 +30,10 @@ export default function Table2() {
                 </div> */}
               </div>
               <TableManual2
-                header1="Prescription_id"
-                header2="Patient name"
-                header3="Phone number"
-                header4="created_at"
+                header1="Patient name"
+                header2="Phone number"
+                header3="created_at"
+                header4="Prescription"
               />
             </div>
           </div>

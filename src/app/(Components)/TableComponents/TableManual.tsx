@@ -13,6 +13,7 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     patient_id: String;
     patient_name: String;
     phone_number: String;
+    gender: String;
   }
   const [patients, setPatients] = useState<ResponseData[]>([]);
 
@@ -26,7 +27,8 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
         }
       );
       console.log("====================================");
-      console.log(response.data.data);
+      console.log(response.data.data[0].created_at);
+
       console.log("====================================");
       setPatients(response.data.data);
     } catch (error: any) {
@@ -36,6 +38,33 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
         console.error("Error fetching patients:", error);
       }
     }
+  };
+  type DateTimeFormatOptions = {
+    year?: "numeric" | "2-digit";
+    month?: "numeric" | "2-digit" | "long" | "short" | "narrow";
+    day?: "numeric" | "2-digit";
+    hour?: "numeric" | "2-digit";
+    minute?: "numeric" | "2-digit";
+    second?: "numeric" | "2-digit";
+    timeZoneName?: "long" | "short";
+    timeZone?: string;
+    hour12?: boolean;
+    weekday?: "long" | "short" | "narrow";
+    era?: "long" | "short" | "narrow";
+  };
+
+  // Function to format date to human-readable format
+  const formatDate = (dateString: string) => {
+    const options: DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
+    const formattedDate = new Date(dateString).toLocaleDateString(
+      undefined,
+      options
+    );
+    return formattedDate;
   };
 
   useEffect(() => {
@@ -69,7 +98,6 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
               <tbody>
                 <tr className="flex  p-2   items-center justify-around">
                   <td className=" ">
-                    {" "}
                     <Avatar
                       sx={{
                         width: 35,
@@ -79,15 +107,17 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
                       }}
                     />
                   </td>
-                  <td className="  pl-20 overflow-hidden text-sm font-semibold whitespace-nowrap truncate">
+                  <td className=" max-w-[115px] min-w-[115px]   overflow-hidden text-sm font-semibold whitespace-nowrap truncate">
                     {patient.patient_name}
                   </td>
                   <td className="">{patient.phone_number}</td>
-                  <td className="max-w-[115px]  overflow-hidden whitespace-nowrap truncate">
+                  <td className="min-w-[50px]  overflow-hidden whitespace-nowrap truncate">
                     {/* Assuming you have a reasonOfVisit property in your patient data */}
-                    {patient.created_at.toLocaleString()}
+                    {formatDate(patient.created_at.toString())}
                   </td>
-                  <td className="truncate max-w-[155px] ">{patient._id}</td>
+                  <td className="items-end flex justify-end min-w-[155px] ">
+                    {patient.gender}
+                  </td>
                 </tr>
               </tbody>
             </table>

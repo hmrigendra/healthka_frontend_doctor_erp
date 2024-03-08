@@ -32,7 +32,7 @@ export default function Table() {
                 header1="Name"
                 header2="Phone No"
                 header3="First Visit"
-                header4="ID"
+                header4="Gender"
               />
             </div>
           </div>

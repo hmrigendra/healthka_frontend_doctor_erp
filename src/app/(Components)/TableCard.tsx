@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FaFilePrescription } from "react-icons/fa";
 
 interface PrescriptionData {
   _id: String;
@@ -11,6 +12,32 @@ interface PrescriptionData {
 interface TableCardProps {
   prescriptions: PrescriptionData[]; // Define the prop type
 }
+type DateFormatType = {
+  year?: "numeric" | "2-digit";
+  month?: "numeric" | "2-digit" | "long" | "short" | "narrow";
+  day?: "numeric" | "2-digit";
+  hour?: "numeric" | "2-digit";
+  minute?: "numeric" | "2-digit";
+  second?: "numeric" | "2-digit";
+  timeZoneName?: "long" | "short";
+  timeZone?: string;
+  hour12?: boolean;
+  weekday?: "long" | "short" | "narrow";
+  era?: "long" | "short" | "narrow";
+};
+
+const formatDate = (dateString: string) => {
+  const option: DateFormatType = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+  const formattedDate = new Date(dateString).toLocaleDateString(
+    undefined,
+    option
+  );
+  return formattedDate;
+};
 
 export function TableCard({ prescriptions }: TableCardProps) {
   return (
@@ -21,9 +48,9 @@ export function TableCard({ prescriptions }: TableCardProps) {
       <table className="w-full bg-indigo-300 rounded-md  ">
         <thead>
           <tr className="flex gap-12 pl-6 p-2">
-            <th className="pr-16 ml-2">UID</th>
-            <th className="pr-16 ml-2">Date</th>
-            <th className="pr-32 ml-4 pl-16 min-w-[350px]">Reason for visit</th>
+            <th className="ml-2">UID</th>
+            <th className=" pl-32 ml-2 flex justify-center">Date</th>
+            <th className="pl-20 ml-4  min-w-[350px]">Reason for visit</th>
             <th className="  ml-2 min-w-[120px]">Follow Up</th>
             <th className="pr-16 ml-2">Prescription</th>
           </tr>
@@ -33,14 +60,14 @@ export function TableCard({ prescriptions }: TableCardProps) {
         <div key={data._id.toString()} className="p-1">
           <table className="w-full bg-indigo-300 rounded-md">
             <tbody>
-              <tr className="flex gap-10">
-                <td className="flex justify-center min-w-16 max-w-20 items-center m-3 truncate   text-sm">
+              <tr className="flex gap-12">
+                <td className="flex min-w-[100px] max-w-[100px] justify-center  items-center m-3 truncate   text-sm">
                   {data.prescription_id}
                 </td>
 
                 <p className="border-2 border-black"></p>
-                <td className="flex justify-center min-w-10 items-center  text-sm">
-                  {data.createdAt}
+                <td className="flex justify-center min-w-[150px] items-center  text-sm">
+                  {formatDate(data.createdAt.toString())}
                 </td>
                 <p className="border-2 border-black"></p>
                 <td className="flex justify-center min-w-[150px] max-w-[200px] overflow-hidden  text-sm">
@@ -48,14 +75,14 @@ export function TableCard({ prescriptions }: TableCardProps) {
                 </td>
 
                 <p className="border-2 border-black"></p>
-                <td className="flex justify-center min-w-[70px] items-center  text-sm">
-                  {data.FollowUpDate}
+                <td className="flex justify-center min-w-[100px] items-center  text-sm">
+                  {data.FollowUpDate ?? "no follow-up"}
                 </td>
 
                 <p className="border-2 border-black"></p>
                 <Link href={`/InvoiceAgain/${data.prescription_id}`}>
-                  <td className="flex justify-center items-center min-w-40 text-sm pr-2">
-                    Open Prescription
+                  <td className="flex justify-center align-middle items-center min-w-40 text-sm pr-2">
+                    <FaFilePrescription className="size-10" />
                   </td>
                 </Link>
               </tr>

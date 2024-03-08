@@ -50,11 +50,11 @@ export function DoctorProfileBody({
             key={index}
             className="flex gap-32 bg-production-white m-2 rounded-lg"
           >
-            <div className="flex max-w-[200px] line-clamp-2 text-indigo-900 text-md font-semibold">
+            <div className="flex min-w-[200px] line-clamp-2 text-indigo-900 text-md font-semibold">
               <FaClinicMedical className="size-10 ml-1 mr-2" />
               <p className="line-clamp-3">{clinic.clinic_name}</p>
             </div>
-            <div className="flex flex-col max-w-[300px] text-md font-semibold text-indigo-900 items-center">
+            <div className="flex flex-col min-w-[200px] text-md font-semibold text-indigo-900 items-center">
               <p>{clinic.timing}</p>
               <div className="flex gap-2">
                 <p>M</p>

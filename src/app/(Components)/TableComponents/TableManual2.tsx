@@ -3,6 +3,7 @@ import { Avatar } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FaFilePrescription } from "react-icons/fa";
 
 export function TableManual2({ header1, header2, header3, header4 }: any) {
   interface ResponseData {
@@ -13,9 +14,37 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
     patient_id: String;
     patient_name: String;
     phone_number: String;
+    prescription_id: String;
   }
   const [patients, setPatients] = useState<ResponseData[]>([]);
 
+  type DateTimeFormatOption = {
+    year?: "numeric" | "2-digit";
+    month?: "numeric" | "2-digit" | "long" | "short" | "narrow";
+    day?: "numeric" | "2-digit";
+    hour?: "numeric" | "2-digit";
+    minute?: "numeric" | "2-digit";
+    second?: "numeric" | "2-digit";
+    timeZoneName?: "long" | "short";
+    timeZone?: string;
+    hour12?: boolean;
+    weekday?: "long" | "short" | "narrow";
+    era?: "long" | "short" | "narrow";
+  };
+
+  const formatDate = (dateString: string) => {
+    const option: DateTimeFormatOption = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
+
+    const formattedDate = new Date(dateString).toLocaleDateString(
+      undefined,
+      option
+    );
+    return formattedDate;
+  };
   const fetchPatients = async () => {
     try {
       const response = await axios.get(
@@ -52,22 +81,22 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
       </table>
       {Array.isArray(patients) &&
         patients.map((patient, index) => (
-          <Link
+          <table
+            className="shadow-sm flex flex-col justify-evenly hover:shadow-lg rounded-md w-full"
             key={index}
-            href={{
-              pathname: "/PatientProfile",
-              query: {
-                patient_id: patient.patient_id.toString(),
-              },
-            }}
           >
-            <table
-              className="shadow-sm flex flex-col justify-evenly hover:shadow-lg rounded-md w-full"
-              key={index}
-            >
-              <tbody>
-                <tr className="flex  p-2   items-center justify-around">
-                  <td className="min-w-6  ">
+            <tbody>
+              <tr className="flex  p-2   items-center justify-around">
+                <Link
+                  key={index}
+                  href={{
+                    pathname: "/PatientProfile",
+                    query: {
+                      patient_id: patient.patient_id.toString(),
+                    },
+                  }}
+                >
+                  <td className="min-w-6 cursor-pointer ">
                     <Avatar
                       sx={{
                         width: 35,
@@ -77,20 +106,25 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
                       }}
                     />
                   </td>
-                  <td className=" max-w-28 overflow-hidden text-sm font-semibold whitespace-nowrap truncate">
-                    {patient.patient_id}
+                </Link>
+
+                <td className=" flex justify-center max-w-[200px] min-w-[200px]">
+                  {patient.patient_name}
+                </td>
+                <td className=" min-w-[150px] flex justify-start overflow-hidden whitespace-nowrap truncate">
+                  {patient.phone_number?.toString()}
+                </td>
+                <td className="min-w-[115px] flex justify-start overflow-hidden">
+                  {formatDate(patient.createdAt.toString())}
+                </td>
+                <Link href={`/InvoiceAgain/${patient.prescription_id}`}>
+                  <td className=" min-w-[100px] flex justify-center overflow-hidden text-sm font-semibold  ">
+                    <FaFilePrescription className="size-10" />
                   </td>
-                  <td className="pl-10">{patient.patient_name}</td>
-                  <td className="max-w-[115px] overflow-hidden whitespace-nowrap truncate">
-                    {patient.phone_number?.toString()}
-                  </td>
-                  <td className="max-w-[115px] overflow-hidden">
-                    {patient.createdAt.toString()}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Link>
+                </Link>
+              </tr>
+            </tbody>
+          </table>
         ))}
     </div>
   );
