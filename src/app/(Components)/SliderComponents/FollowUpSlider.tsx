@@ -51,25 +51,27 @@ export function FollowUpSlider() {
 
   return (
     <div className="max-w-screen-lg mx-auto mt-7">
-      <Link href="/FollowupsChart">
-        <h2 className="w-full h-12 items-center rounded-e-md flex justify-start pl-2 text-indigo-900 font-semibold  bg-production-red text-center rounded-lg">
-          Todays Follow-Ups / Appointments
+      <Link href="">
+        <h2 className="cursor-help w-full h-12 items-center rounded-e-md flex justify-start pl-2 text-indigo-900 font-semibold  bg-production-red text-center rounded-lg">
+          Todays Follow-Ups / Appointments(coming soon......)
         </h2>
       </Link>
 
       <Slider {...settings} className="w-full">
         {data.map((d, index) => (
-          <div key={index} className="bg-production-white max-h-screen p-5 ">
+          <div
+            key={index}
+            className="bg-production-white max-h-screen p-5 cursor-wait"
+          >
             <h1 className="text-center">6:30 pm</h1>
-            <div className="w-full pl-7 pr-7 p-4 ml-2 bg-white cursor-pointer rounded-md">
-              <h3 className="text-center overflow-hidden"> {d.name}</h3>
-              <div className="flex justify-between m-1">
+            <div className="w-full pl-7 pr-7 p-4 ml-2 bg-white cursor-wait rounded-md">
+              <h3 className="text-center overflow-hidden"> Coming Soon</h3>
+              <div className="flex justify-between m-1 cursor-wait">
                 <p> {d.age}</p>
                 <p> {d.gender}</p>
               </div>
               <h1 className="text-sm h-16 overflow-hidden overflow-ellipsis">
-                {" "}
-                {d.problem}
+                Launching this feature with in few weeks
               </h1>
             </div>
           </div>

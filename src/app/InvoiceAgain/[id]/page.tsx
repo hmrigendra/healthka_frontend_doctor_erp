@@ -53,6 +53,8 @@ export default function InvoicePage({ params }: any) {
       setTest(prescriptionData.diagnosis);
       setVitals(prescriptionData.vitals);
       setMedicineData(prescriptionData.medicine);
+      setPrescriptionTime(prescriptionData.prescription_time);
+      setPrescriptionDate(prescriptionData.prescription_date);
 
       // Handle response here
     } catch (error) {
@@ -81,6 +83,10 @@ export default function InvoicePage({ params }: any) {
     age: 0,
     gender: "",
   });
+
+  // prescription_date & prescription_time
+  const [prescriptionDate, setPrescriptionDate] = useState("");
+  const [prescriptionTime, setPrescriptionTime] = useState("");
 
   //Complains
   const [case_history, setComplains] = useState("");
@@ -281,7 +287,11 @@ export default function InvoicePage({ params }: any) {
             clinicAddress={clinicAddress}
             clinicData={clinicData}
           />
-          <CustomerData patientData={patientData} />
+          <CustomerData
+            patientData={patientData}
+            prescriptionDate={prescriptionDate}
+            prescriptionTime={prescriptionTime}
+          />
           <CaseHistory case_history={case_history} vitals={vitals} />
           <Diagnosis diagnosis_history={diagnosis_history} test={test} />
           <MedicineData medicineData={medicineData} />

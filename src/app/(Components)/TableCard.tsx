@@ -1,4 +1,8 @@
+"use client";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import Link from "next/link";
+import { useState } from "react";
 import { FaFilePrescription } from "react-icons/fa";
 
 interface PrescriptionData {
@@ -40,6 +44,7 @@ const formatDate = (dateString: string) => {
 };
 
 export function TableCard({ prescriptions }: TableCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="flex flex-col items-center ml-32 w-3/4 p-6 bg-white shadow-lg">
       <h1 className="bg-indigo-500  font-bold text-white w-full rounded-t-lg p-1 pl-2">
@@ -80,11 +85,26 @@ export function TableCard({ prescriptions }: TableCardProps) {
                 </td>
 
                 <p className="border-2 border-black"></p>
-                <Link href={`/InvoiceAgain/${data.prescription_id}`}>
-                  <td className="flex justify-center align-middle items-center min-w-40 text-sm pr-2">
-                    <FaFilePrescription className="size-10" />
-                  </td>
-                </Link>
+                {isLoading ? (
+                  <Backdrop
+                    sx={{
+                      color: "#fff",
+                      zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                    open={isLoading} // Use isLoading state variable here
+                  >
+                    <CircularProgress color="inherit" />
+                  </Backdrop>
+                ) : (
+                  <Link href={`/InvoiceAgain/${data.prescription_id}`}>
+                    <td
+                      onClick={() => setIsLoading(true)}
+                      className="flex justify-center align-middle items-center min-w-40 text-sm pr-2"
+                    >
+                      <FaFilePrescription className="size-10" />
+                    </td>
+                  </Link>
+                )}
               </tr>
             </tbody>
           </table>

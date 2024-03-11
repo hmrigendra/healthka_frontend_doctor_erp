@@ -6,7 +6,8 @@ export default function middleware(request: NextRequest) {
     path === "/LoginPage" ||
     path === "/signup" ||
     path === "/Auth" ||
-    path === "/ClinicProfile";
+    path === "/ClinicProfile" ||
+    path === "/";
 
   const token = request.cookies.get("JWT")?.value || "";
   console.log("====================================");

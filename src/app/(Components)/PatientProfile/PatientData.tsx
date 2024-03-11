@@ -1,4 +1,5 @@
 import { Avatar } from "@mui/material";
+import Skeleton from "react-loading-skeleton";
 
 interface PatientData {
   id: string;
@@ -13,7 +14,7 @@ interface PatientData {
 
 interface PatientProfileHeaderProps {
   dataLength: number;
-  PatientData: PatientData;
+  PatientData: PatientData | null; // Make PatientData nullable
 }
 type DateFormatType = {
   year?: "numeric" | "2-digit";
@@ -50,10 +51,16 @@ export function PatientProfileHeader({
     <div className="flex m-16 mb-2">
       <div className="flex flex-col w-1/4 p-6">
         <div className="bg-blue-100 flex flex-col items-center justify-center p-6 rounded-lg">
-          <Avatar sx={{ width: 120, height: 120, borderRadius: "50%" }}>
-            Profile
-          </Avatar>
-          <h1 className="p-2">{PatientData.patient_name}</h1>
+          {PatientData ? (
+            <Avatar sx={{ width: 120, height: 120, borderRadius: "50%" }}>
+              Profile
+            </Avatar>
+          ) : (
+            <Skeleton circle={true} height={120} width={120} />
+          )}
+          <h1 className="p-2">
+            {PatientData ? PatientData.patient_name : <Skeleton width={120} />}
+          </h1>
 
           <div>
             <button className="bg-indigo-400 p-1 rounded-md mt-2">
@@ -73,27 +80,34 @@ export function PatientProfileHeader({
           <div className="w-2/6 p-2">
             <p>
               <span className="font-semibold pr-2">AGE: </span>
-              {PatientData.age}
+              {PatientData ? PatientData.age : <Skeleton width={50} />}
             </p>
             <p>
-              {" "}
               <span className="font-semibold pr-2"> Gender:</span>
-              {PatientData.gender}
+              {PatientData ? PatientData.gender : <Skeleton width={50} />}
             </p>
             <p>
               <span className="font-semibold pr-2"> Phone Number:</span>
-              {PatientData.phone_number}
+              {PatientData ? (
+                PatientData.phone_number
+              ) : (
+                <Skeleton width={100} />
+              )}
             </p>
           </div>
           <div className="p-2 ">
             <p>
               <span className="font-semibold pr-2">NO. of visits:</span>{" "}
-              {dataLength}
+              {dataLength !== null ? dataLength : <Skeleton width={50} />}
             </p>{" "}
             {/* Use dataLength directly */}
             <p style={{ overflowWrap: "break-word" }}>
               <span className="font-semibold pr-2">First visit:</span>
-              {formatDate(PatientData.created_at.toString())}
+              {PatientData ? (
+                formatDate(PatientData.created_at.toString())
+              ) : (
+                <Skeleton width={100} />
+              )}
             </p>
           </div>
         </div>

@@ -27,14 +27,26 @@ export default function ClinicProfile() {
     pin_code: "",
   });
 
+  const [errors, setErrors] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const test = () => {
-    router.push("/Auth");
-  };
+  // const test = () => {
+  //   router.push("/Auth");
+  // };
   const clinicPost = async () => {
     try {
+      if (
+        clinic.clinic_name.length === 0 ||
+        clinic.start_time.length === 0 ||
+        clinic.end_time.length === 0 ||
+        clinic.clinic_phone_number.length === 0 ||
+        clinic.working_days.length === 0
+      ) {
+        setErrors(true);
+      }
+
       const doctor_id = searchParams.get("doctor_id");
       const name = searchParams.get("doctor_name");
       console.log(doctor_id);
@@ -98,6 +110,13 @@ export default function ClinicProfile() {
                     placeholder="Clinic name"
                     className="bg-red-200 rounded-lg m-3  placeholder:text-gray-500 w-[70%] p-2"
                   />
+                  {clinic.clinic_name.length === 0 && errors ? (
+                    <p className="text-sm text-blue-700">
+                      Clinic name can't be empty
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div className="flex-col">
                   <p>Clinic Phone number</p>
@@ -113,6 +132,13 @@ export default function ClinicProfile() {
                       })
                     }
                   />
+                  {clinic.clinic_phone_number.length === 0 && errors ? (
+                    <p className="text-sm text-blue-700">
+                      Clinic phone number can't be empty
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
             </div>
@@ -127,6 +153,13 @@ export default function ClinicProfile() {
                     setClinic({ ...clinic, start_time: e.target.value })
                   }
                 />
+                {clinic.start_time.length === 0 && errors ? (
+                  <p className="text-sm text-blue-700">
+                    Clinic opening time is required
+                  </p>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="flex-col mr-10">
                 <p>closing time</p>
@@ -138,6 +171,13 @@ export default function ClinicProfile() {
                     setClinic({ ...clinic, end_time: e.target.value })
                   }
                 />
+                {clinic.end_time.length === 0 && errors ? (
+                  <p className="text-sm text-blue-700">
+                    Clinic opening time is required
+                  </p>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
 
@@ -165,6 +205,13 @@ export default function ClinicProfile() {
                     setClinic({ ...clinic, working_days: e.target.value })
                   }
                 />
+                {clinic.working_days.length === 0 && errors ? (
+                  <p className="text-sm text-blue-700">
+                    Working days are required{" "}
+                  </p>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             <div>

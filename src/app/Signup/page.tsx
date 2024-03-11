@@ -41,11 +41,27 @@ export default function SignUp() {
     setClinicOwned(event.target.checked ? 1 : 0);
   };
   const router = useRouter();
+
+  const [errors, setErrors] = useState(false);
   const testRoute = () => {
     router.push("/ClinicProfile");
   };
   const doctor_profile = async () => {
     try {
+      if (
+        doctorProfile.first_name.length === 0 ||
+        doctorProfile.last_name.length === 0 ||
+        doctorProfile.DOB.length === 0 ||
+        doctorProfile.phone_number.length < 10 ||
+        doctorProfile.gender.length === 0 ||
+        qualification.College_name.length === 0 ||
+        qualification.experience.length === 0 ||
+        qualification.qualification.length === 0 ||
+        qualification.specialization.length === 0 ||
+        qualification.year_of_passing.length === 0
+      ) {
+        setErrors(true);
+      }
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/create-doctor-profile`,
         {
@@ -119,6 +135,13 @@ export default function SignUp() {
                 type="text"
                 className="w-full p-2 bg-red-200 rounded-lg"
               />
+              {doctorProfile.first_name.length === 0 && errors ? (
+                <p className="text-sm text-blue-700">
+                  First name can't be empty
+                </p>
+              ) : (
+                ""
+              )}
             </div>
             <div className="w-2/6 m-3">
               <p>Last name</p>
@@ -133,6 +156,13 @@ export default function SignUp() {
                   })
                 }
               />
+              {doctorProfile.last_name.length === 0 && errors ? (
+                <p className="text-sm text-blue-700">
+                  Last name can't be empty
+                </p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
 
@@ -148,6 +178,11 @@ export default function SignUp() {
                     setDoctorProfile({ ...doctorProfile, DOB: e.target.value })
                   }
                 />
+                {doctorProfile.DOB.length === 0 && errors ? (
+                  <p className="text-sm text-blue-700">DOB can't be empty</p>
+                ) : (
+                  ""
+                )}
               </div>
               {/* Add calender over here  */}
               <div className="flex-col">
@@ -170,6 +205,13 @@ export default function SignUp() {
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                   </select>
+                  {doctorProfile.gender.length === 0 && errors ? (
+                    <p className="text-sm text-blue-700">
+                      Gender can't be empty
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
             </div>
@@ -186,6 +228,13 @@ export default function SignUp() {
                 type="text"
                 className="w-full p-2  bg-red-200 rounded-lg"
               />
+              {doctorProfile.phone_number.length === 0 && errors ? (
+                <p className="text-sm text-blue-700">
+                  Phone number can't be empty
+                </p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
 
@@ -317,6 +366,11 @@ export default function SignUp() {
                 })
               }
             />
+            {qualification.qualification.length === 0 && errors ? (
+              <p className="text-sm text-blue-700">required field</p>
+            ) : (
+              ""
+            )}
             <input
               type="text"
               className="w-2/6 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500 p-2"
@@ -329,6 +383,11 @@ export default function SignUp() {
                 })
               }
             />
+            {qualification.College_name.length === 0 && errors ? (
+              <p className="text-sm text-blue-700">required field</p>
+            ) : (
+              ""
+            )}
           </div>
           <div className="flex m-3">
             <input
@@ -343,12 +402,17 @@ export default function SignUp() {
                 })
               }
             />
+            {qualification.specialization.length === 0 && errors ? (
+              <p className="text-sm text-blue-700">required field</p>
+            ) : (
+              ""
+            )}
             <span className="items-center flex text-sm m-1 justify-center">
               Year of pass
             </span>
             <input
               type="date"
-              className="w-[10%] p-2  border-2 mr-3 bg-red-200 rounded-lg  placeholder:text-gray-500"
+              className="w-[15%] p-2  border-2 mr-3 bg-red-200 rounded-lg  placeholder:text-gray-500"
               name=""
               id=""
               placeholder="Year of pass"
@@ -360,6 +424,11 @@ export default function SignUp() {
                 })
               }
             />
+            {qualification.year_of_passing.length === 0 && errors ? (
+              <p className="text-sm text-blue-700">required field</p>
+            ) : (
+              ""
+            )}
 
             <input
               type="text"
@@ -373,6 +442,11 @@ export default function SignUp() {
                 })
               }
             />
+            {qualification.experience.length === 0 && errors ? (
+              <p className="text-sm text-blue-700">required field</p>
+            ) : (
+              ""
+            )}
           </div>
           <Box>
             <FormControlLabel

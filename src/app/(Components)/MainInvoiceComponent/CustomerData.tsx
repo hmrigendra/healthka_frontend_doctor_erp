@@ -1,4 +1,8 @@
-export function CustomerData({ patientData }: any) {
+export function CustomerData({
+  patientData,
+  prescriptionDate,
+  prescriptionTime,
+}: any) {
   const outPut = () => {
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}/${
@@ -8,7 +12,9 @@ export function CustomerData({ patientData }: any) {
   };
   const TimeOutPut = () => {
     const currentDate = new Date();
-    const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedTime = `${hours}:${String(minutes).padStart(2, "0")}`;
     return formattedTime;
   };
   return (
@@ -34,8 +40,8 @@ export function CustomerData({ patientData }: any) {
         </p>
       </div>
       <div>
-        <p>Date: {outPut()}</p>
-        <p>Time: {TimeOutPut()}</p>
+        <p>Date: {prescriptionDate}</p>
+        <p>Time: {prescriptionTime}</p>
       </div>
     </div>
   );

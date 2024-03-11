@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { PatientProfileHeader } from "../(Components)/PatientProfile/PatientData";
 import { TableCard } from "../(Components)/TableCard";
+import { Modal } from "../(Components)/Modal";
 
 interface PatientData {
   id: string;
@@ -25,7 +26,9 @@ interface prescriptionData {
 interface ApiResponse {
   patientData: PatientData;
   dataLength: number;
+  message: String;
   data: prescriptionData[];
+  statusCode: Number;
 }
 
 export default function PatientProfile({
@@ -46,6 +49,13 @@ export default function PatientProfile({
     age: 0,
   });
 
+  //Model || popup
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const handleOnclose = () => setShowModal(false);
+
+  //Circular progress Indicator
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -57,7 +67,7 @@ export default function PatientProfile({
         );
 
         console.log("====================================");
-        console.log(response.data.patientData);
+        console.log("True Data", response);
         console.log("====================================");
         const responseData = response.data;
         setDataLength(responseData.dataLength);
@@ -67,13 +77,31 @@ export default function PatientProfile({
           setPatient(patientData);
         }
 
-        // Extract the first patient object from the data array
+        if (response.data.statusCode === 404) {
+          setMessage(responseData.message.toString());
+          setShowModal(true);
+        }
         if (responseData.data.length > 0) {
           const patientData = responseData.data;
           setPrescriptions(patientData);
         }
-      } catch (error) {
+
+        if (responseData.data.length === 0) {
+          setMessage(responseData.message.toString());
+          setShowModal(true);
+        }
+      } catch (error: any) {
         console.error("Error fetching patient data:", error);
+
+        if (error instanceof TypeError) {
+          // Handle TypeError
+          setMessage("Visit history not found ");
+        } else {
+          // Handle other errors
+          setMessage("An error occurred while fetching patient data.");
+        }
+
+        setShowModal(true);
       }
     };
 
@@ -85,6 +113,7 @@ export default function PatientProfile({
 
   return (
     <>
+      <Modal visible={showModal} onClose={handleOnclose} response={message} />
       {prescriptions && (
         <PatientProfileHeader dataLength={dataLength} PatientData={patient} />
       )}

@@ -16,69 +16,96 @@ import { FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
 import ReactToPrint from "react-to-print";
 import { useRouter } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
+import Backdrop from "@mui/material/Backdrop/Backdrop";
+import { data } from "../../../public/practiceData";
+import { Modal } from "../(Components)/Modal";
+import useInputValidation from "../(Components)/InputValidation/InputValidation";
 
 export default function InvoicePage() {
+  //model
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const handleOnclose = () => setShowModal(false);
+  //to handle CircularProgressIndicator
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [errors, setErrors] = useState(false);
+
+  const outPut = () => {
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}/${
+      currentDate.getMonth() + 1
+    }/${currentDate.getFullYear()}`;
+    return formattedDate;
+  };
+  const TimeOutPut = () => {
+    const currentDate = new Date();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedTime = `${hours}:${String(minutes).padStart(2, "0")}`;
+    return formattedTime;
+  };
+
   const CreatePrescription = async () => {
     try {
-      const outPut = () => {
-        const currentDate = new Date();
-        const formattedDate = `${currentDate.getDate()}/${
-          currentDate.getMonth() + 1
-        }/${currentDate.getFullYear()}`;
-        return formattedDate;
-      };
-      const realData = outPut();
-      const TimeOutPut = () => {
-        const currentDate = new Date();
-        const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
-        return formattedTime;
-      };
-      const realTime = TimeOutPut();
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/create_prescription`,
-        {
-          patient_name: patientData.patient_name,
-          phone_number: patientData.phone_number,
-          age: patientData.age,
-          gender: patientData.gender,
-          case_history: case_history,
-          vitals: vitals,
-          diagnosis: test,
-          diagnosis_history: diagnosis_history,
-          medicine: medicineData,
-          general_advice: general_advice,
-          referral: referral,
-          surgery_advice: surgery_advice,
-          FollowUpTime: FollowUpTime,
-          FollowUpDate: FollowUpDate,
-          prescription_date: realData,
-          prescription_time: realTime,
-        },
+      // input Validator
 
-        {
-          withCredentials: true,
+      if (
+        patientData.patient_name.length === 0 ||
+        patientData.phone_number.length < 10 ||
+        patientData.age === 0 ||
+        patientData.gender.length === 0
+      ) {
+        setShowModal(true);
+        return setErrors(true);
+      } else {
+        const realData = outPut();
+        const realTime = TimeOutPut();
+        setIsLoading(true);
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/create_prescription`,
+          {
+            patient_name: patientData.patient_name,
+            phone_number: patientData.phone_number,
+            age: patientData.age,
+            gender: patientData.gender,
+            case_history: case_history,
+            vitals: vitals,
+            diagnosis: test,
+            diagnosis_history: diagnosis_history,
+            medicine: medicineData,
+            general_advice: general_advice,
+            referral: referral,
+            surgery_advice: surgery_advice,
+            FollowUpTime: FollowUpTime,
+            FollowUpDate: FollowUpDate,
+            prescription_date: realData,
+            prescription_time: realTime,
+          },
+
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.apiSuccess === 1) {
+          setIsLoading(false);
         }
-      );
-      console.log("Data being sent:", {
-        patientData: patientData,
-        case_history: case_history,
-        vitals: vitals,
-        diagnosis_history: diagnosis_history,
-        medicineData: medicineData,
-        general_advice: general_advice,
-        referral: referral,
-        surgery_advice: surgery_advice,
-        FollowUpDate: FollowUpDate,
-        FollowUpTime: FollowUpTime,
-        test: test,
-      });
-    } catch (error) {
-      // Handle errors here
-      console.error("Error creating prescription:", error);
+        if (response.data.apiSuccess === 0) {
+          setMessage(response.data.message);
+          setIsLoading(false);
+        }
+      }
+    } catch (error: any) {
+      setMessage(error.message);
+      setShowModal(true);
+      setIsLoading(false);
     }
   };
   const Router = useRouter();
   const SendCustomerData = () => {
+    setIsLoading(true);
     Router.push(`/Bill?customer_name=${patientData.patient_name}&number=${patientData.phone_number}
     &age=${patientData.age}&gender=${patientData.gender}`);
   };
@@ -352,6 +379,7 @@ export default function InvoicePage() {
 
   return (
     <main className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
+      <Modal visible={showModal} onClose={handleOnclose} response={message} />
       <ReactToPrint
         trigger={() => (
           <button className="rounded-md p-2 pl-6 pr-6 bg-red-500 text-white font-semibold">
@@ -362,12 +390,23 @@ export default function InvoicePage() {
       />
       {active === true && (
         <div className="p-5" ref={componentRef}>
+          {errors && (
+            <Modal
+              visible={showModal}
+              onClose={handleOnclose}
+              response={"Patient data can't be empty"}
+            />
+          )}
           <Header
             doctorData={doctorData}
             clinicAddress={clinicAddress}
             clinicData={clinicData}
           />
-          <CustomerData patientData={patientData} />
+          <CustomerData
+            patientData={patientData}
+            prescriptionDate={outPut()}
+            prescriptionTime={TimeOutPut()}
+          />
           <CaseHistory case_history={case_history} vitals={vitals} />
           <Diagnosis diagnosis_history={diagnosis_history} test={test} />
           <MedicineData medicineData={medicineData} />
@@ -388,20 +427,44 @@ export default function InvoicePage() {
               EDIT
             </button>
 
-            <button
-              className="p-2 pl-6 pr-6 bg-red-500 text-white font-semibold"
-              onClick={CreatePrescription}
-            >
-              SAVE
-            </button>
+            {isLoading ? (
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={isLoading}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            ) : (
+              <button
+                className="p-2 pl-6 pr-6 bg-red-500 text-white font-semibold"
+                onClick={CreatePrescription}
+              >
+                SAVE
+              </button>
+            )}
           </div>
           <div className="">
-            <button
-              onClick={SendCustomerData}
-              className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
-            >
-              Bill
-            </button>
+            {isLoading ? (
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={isLoading}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            ) : (
+              <button
+                onClick={SendCustomerData}
+                className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
+              >
+                Bill
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -419,6 +482,11 @@ export default function InvoicePage() {
                 value={patientData.patient_name}
                 onChange={handlePatientData}
               />
+              {patientData.patient_name.length === 0 && errors ? (
+                <p className="text-sm text-red-400">Patient name is required</p>
+              ) : (
+                ""
+              )}
             </div>
             <div className="flex flex-col">
               <label htmlFor="phone_number" className="mb-1">
@@ -441,6 +509,11 @@ export default function InvoicePage() {
                     {data.phone_number}
                   </span>
                 ))}
+              {patientData.phone_number.length < 10 && errors ? (
+                <p className="text-sm text-red-400">Phone number is required</p>
+              ) : (
+                ""
+              )}
             </div>
             <div className="flex">
               <label htmlFor="patient_gender" className="mb-1">
@@ -459,6 +532,11 @@ export default function InvoicePage() {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+              {patientData.gender.length === 0 && errors ? (
+                <p className="text-sm text-red-400">Gender is required</p>
+              ) : (
+                ""
+              )}
             </div>
 
             <div className="flex ">
@@ -477,6 +555,11 @@ export default function InvoicePage() {
                   })
                 }
               />
+              {patientData.age === 0 && errors ? (
+                <p className="text-sm text-red-400">age is required</p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="flex flex-col">
@@ -620,7 +703,7 @@ export default function InvoicePage() {
                     }
                   />
                 </div>
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                   <label htmlFor={`time_${i}`}>Time</label>
                   <input
                     type="text"
@@ -631,7 +714,7 @@ export default function InvoicePage() {
                       handleMedicineChange(i, "time", e.target.value)
                     }
                   />
-                </div>
+                </div> */}
                 <div className="flex flex-col">
                   <label htmlFor={`duration_${i}`}>Duration</label>
                   <input
