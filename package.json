@@ -2,7 +2,7 @@
   "name": "healthka_erp_doctors",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://healthka.life",
+  "proxy": "https://healthka.life/api",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

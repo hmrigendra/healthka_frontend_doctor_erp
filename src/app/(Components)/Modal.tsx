@@ -8,7 +8,11 @@ export function Modal({ visible, response, onClose }: any) {
       <div className="bg-white p-2 rounded-md w-96 h-2/5 ">
         <p className="font-semibold text-2xl p-4 ">Error Occur</p>
         <p className="text-lg p-4">{response}</p>
-        <p className="text-lg p-4 pb-2">Please try again</p>
+        <p className="text-lg p-4 pb-2">
+          {response === "Prescription Created Successfully"
+            ? ""
+            : "Please try again"}
+        </p>
         <div className="p-2">
           <button
             onClick={onClose}

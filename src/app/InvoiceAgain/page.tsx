@@ -20,7 +20,8 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import Backdrop from "@mui/material/Backdrop/Backdrop";
 import { data } from "../../../public/practiceData";
 import { Modal } from "../(Components)/Modal";
-import useInputValidation from "../(Components)/InputValidation/InputValidation";
+
+import { Span } from "next/dist/trace";
 
 export default function InvoicePage() {
   //model
@@ -90,6 +91,8 @@ export default function InvoicePage() {
         );
 
         if (response.data.apiSuccess === 1) {
+          setMessage(response.data.message);
+          setShowModal(true);
           setIsLoading(false);
         }
         if (response.data.apiSuccess === 0) {
@@ -390,6 +393,11 @@ export default function InvoicePage() {
       />
       {active === true && (
         <div className="p-5" ref={componentRef}>
+          <Modal
+            visible={showModal}
+            onClose={handleOnclose}
+            response={message}
+          />
           {errors && (
             <Modal
               visible={showModal}
@@ -500,6 +508,10 @@ export default function InvoicePage() {
                 onChange={handlePatientData}
               />
               {patientData.phone_number.length > 4 &&
+              apiPatientData?.filter(
+                (someData) => someData.phone_number === patientData.phone_number
+              ) ? (
+                // Render prediction functionality if patientData.phone_number matches any phone_number in apiPatientData
                 apiPatientData.map((data) => (
                   <span
                     key={data.phone_number}
@@ -508,7 +520,12 @@ export default function InvoicePage() {
                   >
                     {data.phone_number}
                   </span>
-                ))}
+                ))
+              ) : (
+                // Render patientData.phone_number if it doesn't match any phone_number in apiPatientData
+                <span></span>
+              )}
+
               {patientData.phone_number.length < 10 && errors ? (
                 <p className="text-sm text-red-400">Phone number is required</p>
               ) : (
