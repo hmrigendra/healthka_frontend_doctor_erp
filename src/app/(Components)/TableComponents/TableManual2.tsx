@@ -42,16 +42,10 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
   const [pageNumber, setPageNumber] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const perviousPage = () => {
-    if (pageNumber <= nPage) {
-      setPageNumber(pageNumber - 1);
-    }
     if (pageNumber > 1) {
       setPageNumber(pageNumber - 1);
     } else {
       alert("You are on your Index page");
-    }
-    if (pageNumber <= nPage) {
-      setPageNumber(pageNumber - 1);
     }
   };
   const nextPage = () => {
@@ -87,10 +81,12 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
       );
       const realData = response.data.data;
 
-      setLength(response.data.nhHists);
-      setPatients(realData);
+      if (response.data.apiSuccess === 1 && response.data.resSuccess === 1) {
+        setLength(response.data.nhHists);
+        setPatients(realData);
+      }
 
-      if (response.data.length === 0) {
+      if (response.data.apiSuccess === 1 && response.data.resSuccess === 0) {
         setMessage(response.data.message);
         setShowModal(true);
       }
@@ -130,7 +126,11 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
               </tr>
             </thead>
           </table>
-          {Array.isArray(patients) &&
+
+          {length === 0 ? (
+            <p>No data found</p>
+          ) : (
+            Array.isArray(patients) &&
             patients.map((patient, index) => (
               <table
                 className="shadow-sm flex flex-col justify-evenly hover:shadow-lg rounded-md w-full"
@@ -182,7 +182,8 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
                   </tr>
                 </tbody>
               </table>
-            ))}
+            ))
+          )}
         </>
       )}
       <div className="shadow-lg m-4 inline-block rounded-lg overflow-hidden border-2 border-gray-400">
