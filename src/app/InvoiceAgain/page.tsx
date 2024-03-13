@@ -505,7 +505,17 @@ export default function InvoicePage() {
                 name="phone_number"
                 className="border-2 border-gray-300 rounded-md"
                 value={patientData.phone_number}
-                onChange={handlePatientData}
+                onChange={(e) => {
+                  const enteredValue = e.target.value;
+
+                  if (/[a-zA-Z]/.test(enteredValue)) {
+                    console.log("Alphabets are not allowed.");
+                  } else {
+                    handlePatientData(e);
+                  }
+                }}
+                pattern="[0-9]*"
+                title="Please enter only numeric characters"
               />
               {patientData.phone_number.length > 4 &&
               apiPatientData?.filter(

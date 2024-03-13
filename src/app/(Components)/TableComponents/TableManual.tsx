@@ -17,17 +17,16 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     gender: string;
   }
 
-  //to handle api
-  const [patients, setPatients] = useState<ResponseData[]>([]);
-  //to handle total number of documents
-  const [length, setLength] = useState(0);
+  const [patients, setPatients] = useState<ResponseData[] | null | undefined>(
+    null
+  );
 
-  //to handle Model
+  const [length, setLength] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const handleOnclose = () => setShowModal(false);
-  //to handle CircularProgressIndicator
   const [isLoading, setIsLoading] = useState(false);
+
   const fetchPatients = async () => {
     try {
       setIsLoading(true);
@@ -37,25 +36,17 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
           withCredentials: true,
         }
       );
+      if (response.data.apiSuccess === 1 && response.data.resSuccess === 1) {
+        setLength(response.data.nhHits);
+        setPatients(response.data.data);
+        setIsLoading(false);
+      }
 
-      console.log("====================================");
-      console.log(response);
-      console.log("====================================");
-
-      setIsLoading(false);
-
-      setLength(response.data.nhHits);
-      setPatients(response.data.data);
-
-      if (response.data.apiSuccess === 0) {
+      if (response.data.apiSuccess === 1 && response.data.resSuccess === 0) {
         setMessage(response.data.message);
         setIsLoading(false);
         setShowModal(true);
-        <Modal
-          visible={showModal}
-          onChange={handleOnclose}
-          response={message}
-        />;
+        setLength(0);
       }
     } catch (error: any) {
       setIsLoading(false);
@@ -64,25 +55,18 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     }
   };
 
-  // Function to format date to human-readable format
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "short",
       day: "numeric",
     };
-    const formattedDate = new Date(dateString).toLocaleDateString(
-      undefined,
-      options
-    );
-    return formattedDate;
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   const [pageSize, setPageSize] = useState(6);
   const nPage = Math.ceil(length / pageSize);
-
   const numbers = [...Array(nPage + 1).keys()].slice(1);
-
   const [pageNumber, setPageNumber] = useState(1);
 
   const perviousPage = () => {
@@ -126,47 +110,53 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
               </tr>
             </thead>
           </table>
-          {patients.map((patient, index) => (
-            <Link
-              key={index}
-              href={{
-                pathname: "/PatientProfile",
-                query: {
-                  patient_id: patient.patient_id.toString(),
-                },
-              }}
-            >
-              <table
-                onClick={() => setIsLoading(true)}
-                className="shadow-sm flex flex-col justify-around hover:shadow-lg rounded-md w-full"
-              >
-                <tbody>
-                  <tr className="flex  p-2   items-center justify-around">
-                    <td className=" ">
-                      <Avatar
-                        sx={{
-                          width: 35,
-                          height: 35,
-                          borderRadius: "50%",
-                          marginLeft: "-60",
-                        }}
-                      />
-                    </td>
-                    <td className=" max-w-[115px] min-w-[115px]   overflow-hidden text-sm font-semibold whitespace-nowrap truncate">
-                      {patient.patient_name}
-                    </td>
-                    <td className="">{patient.phone_number}</td>
-                    <td className="min-w-[50px]  overflow-hidden whitespace-nowrap truncate">
-                      {formatDate(patient.created_at.toString())}
-                    </td>
-                    <td className="items-end flex justify-end min-w-[155px] ">
-                      {patient.gender}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </Link>
-          ))}
+          {!patients ? (
+            <p>No patients available.</p>
+          ) : (
+            <>
+              {patients.map((patient, index) => (
+                <Link
+                  key={index}
+                  href={{
+                    pathname: "/PatientProfile",
+                    query: {
+                      patient_id: patient.patient_id.toString(),
+                    },
+                  }}
+                >
+                  <table
+                    onClick={() => setIsLoading(true)}
+                    className="shadow-sm flex flex-col justify-around hover:shadow-lg rounded-md w-full"
+                  >
+                    <tbody>
+                      <tr className="flex  p-2   items-center justify-around">
+                        <td className=" ">
+                          <Avatar
+                            sx={{
+                              width: 35,
+                              height: 35,
+                              borderRadius: "50%",
+                              marginLeft: "-60",
+                            }}
+                          />
+                        </td>
+                        <td className=" max-w-[115px] min-w-[115px]   overflow-hidden text-sm font-semibold whitespace-nowrap truncate">
+                          {patient.patient_name}
+                        </td>
+                        <td className="">{patient.phone_number}</td>
+                        <td className="min-w-[50px]  overflow-hidden whitespace-nowrap truncate">
+                          {formatDate(patient.created_at.toString())}
+                        </td>
+                        <td className="items-end flex justify-end min-w-[155px] ">
+                          {patient.gender}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Link>
+              ))}
+            </>
+          )}
         </div>
       )}
       <div className="shadow-lg m-4 inline-block rounded-lg overflow-hidden border-2 border-gray-400">
