@@ -21,10 +21,15 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
     null
   );
 
+  // for api
   const [length, setLength] = useState(0);
+
+  //for the model
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const handleOnclose = () => setShowModal(false);
+
+  //for the circular progress indicator
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchPatients = async () => {
@@ -50,8 +55,28 @@ export function TableManual({ header1, header2, header3, header4 }: any) {
       }
     } catch (error: any) {
       setIsLoading(false);
-      setMessage(error.message);
-      setShowModal(true);
+      // Network errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue. Please check your internet connection or contact HealthKa."
+        );
+      }
+      //  Axios errors
+      else if (error.response) {
+        //response error
+
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
+      //  other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
     }
   };
 

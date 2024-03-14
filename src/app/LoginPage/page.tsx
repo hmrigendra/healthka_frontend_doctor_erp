@@ -27,6 +27,9 @@ export default function LoginPage() {
 
   const [errorResponse, setErrorResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const handleOnclose = () => setShowModal(false);
+  const [message, setMessage] = useState("");
   const handleLogin = async () => {
     setIsLoading(true);
     try {
@@ -52,14 +55,36 @@ export default function LoginPage() {
       );
       localStorage.setItem("clinic", JSON.stringify(response.data.clinicData));
     } catch (error: any) {
-      console.log(error);
+      setIsLoading(false);
 
-      console.error("Login failed:", error);
+      // Network errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue. Please check your internet connection or contact HealthKa."
+        );
+      }
+      //  Axios errors
+      else if (error.response) {
+        //response error
+        setIsLoading(false);
+
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
+      //  other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
     }
   };
 
   return (
     <div className="h-screen items-center justify-center flex  bg-gradient-to-r from-red-400 to-blue-200">
+      <Modal visible={showModal} onClose={handleOnclose} response={message} />
       {isLoading ? (
         <Backdrop
           sx={{

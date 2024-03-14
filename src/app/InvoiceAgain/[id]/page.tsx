@@ -15,8 +15,17 @@ import { Referral } from "@/app/(Components)/MainInvoiceComponent/Referral";
 import { NextVisit } from "@/app/(Components)/MainInvoiceComponent/NextVisit";
 import { SurgeryAdvice } from "@/app/(Components)/MainInvoiceComponent/SurgeryAdvice";
 import ClinicProfile from "../../ClinicProfile/page";
+import Backdrop from "@mui/material/Backdrop/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 
 export default function InvoicePage({ params }: any) {
+  //for the model
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const handleOnclose = () => setShowModal(false);
+
+  //for the circular progress indicator
+  const [isLoading, setIsLoading] = useState(false);
   const getData = useCallback(async () => {
     try {
       const response = await axios.post(
@@ -57,8 +66,22 @@ export default function InvoicePage({ params }: any) {
       setPrescriptionDate(prescriptionData.prescription_date);
 
       // Handle response here
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (
+        error.toJSON().code === "ERR_BAD_REQUEST" ||
+        "ECONNREFUSED" ||
+        "ENETUNREACH"
+      ) {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue please check your internet or else call  HealthKa"
+        );
+      } else {
+        setIsLoading(false);
+        setMessage(error.toJSON().message);
+        setShowModal(true);
+      }
     }
   }, [params.id]);
 
@@ -125,6 +148,7 @@ export default function InvoicePage({ params }: any) {
       advice: "",
       time: "",
       duration: "",
+      dose_code: "",
     },
   ]);
   const handleMedicineChange = (
@@ -153,6 +177,7 @@ export default function InvoicePage({ params }: any) {
         time: "",
         duration: "",
         advice: "",
+        dose_code: "",
       },
     ]);
   };
@@ -305,12 +330,24 @@ export default function InvoicePage({ params }: any) {
       {active === true && (
         <div className="flex flex-row justify-between">
           <div className="">
-            <button
-              onClick={SendCustomerData}
-              className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
-            >
-              Bill
-            </button>
+            {isLoading ? (
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={isLoading}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            ) : (
+              <button
+                onClick={SendCustomerData}
+                className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
+              >
+                Bill
+              </button>
+            )}
           </div>
         </div>
       )}

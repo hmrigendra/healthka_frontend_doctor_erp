@@ -199,11 +199,13 @@ export default function InvoicePage() {
   const [medicineData, setMedicineData] = useState([
     {
       medicine_name: "",
-      medicine_type: "",
-      dose: "",
+      medicine_type: "", //tablet...
+
+      dose: "", //number of tab ..
       advice: "",
-      time: "",
-      duration: "",
+      time: "", //after or before
+      duration: "", // 1 week / days
+      dose_code: "", // 1-0-1
     },
   ]);
   const handleMedicineChange = (
@@ -232,6 +234,7 @@ export default function InvoicePage() {
         time: "",
         duration: "",
         advice: "",
+        dose_code: "",
       },
     ]);
   };
@@ -306,8 +309,22 @@ export default function InvoicePage() {
       );
 
       setApiPatientData(response.data.result);
-    } catch (error) {
-      // Handle errors
+    } catch (error: any) {
+      if (
+        error.toJSON().code === "ERR_BAD_REQUEST" ||
+        "ECONNREFUSED" ||
+        "ENETUNREACH"
+      ) {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue please check your internet or else call  HealthKa"
+        );
+      } else {
+        setIsLoading(false);
+        setMessage(error.toJSON().message);
+        setShowModal(true);
+      }
     }
   }, [patientData.phone_number]);
 
@@ -686,7 +703,7 @@ export default function InvoicePage() {
           <div>
             <p>Medicine </p>
             {medicineData.map((data, i) => (
-              <div key={i} className="flex items-center">
+              <div key={i} className="flex items-center mb-3">
                 <div className="flex flex-col">
                   <label htmlFor={`medicine_name_${i}`}>Medicine name</label>
                   <input
@@ -708,16 +725,22 @@ export default function InvoicePage() {
                 </div>
                 <div className="flex flex-col">
                   <label htmlFor={`type_${i}`}>Type</label>
-                  <input
-                    type="text"
+                  <select
                     name={`medicine_type_${i}`}
-                    className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                    className="border-2 border-gray-400 w-20 ml-2 mr-2 "
                     value={data.medicine_type}
                     onChange={(e) =>
                       handleMedicineChange(i, "medicine_type", e.target.value)
                     }
-                  />
+                  >
+                    <option value="">Select Medicine Type</option>
+                    <option value="tablet">tablet</option>
+                    <option value="drop">drop</option>
+                    <option value="injection">injection</option>
+                    <option value="ointment">ointment</option>
+                  </select>
                 </div>
+
                 <div className="flex flex-col">
                   <label htmlFor={`dose_${i}`}>Dose</label>
                   <input
@@ -725,9 +748,14 @@ export default function InvoicePage() {
                     name={`dose_${i}`}
                     className="border-2 border-gray-400 w-10 ml-2 mr-2"
                     value={data.dose}
-                    onChange={(e) =>
-                      handleMedicineChange(i, "dose", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      // Validate if the input value contains only numeric characters
+                      if (/^\d*$/.test(inputValue)) {
+                        // If valid, update the state
+                        handleMedicineChange(i, "dose", inputValue);
+                      }
+                    }}
                   />
                 </div>
                 {/* <div className="flex flex-col">
@@ -744,22 +772,68 @@ export default function InvoicePage() {
                 </div> */}
                 <div className="flex flex-col">
                   <label htmlFor={`duration_${i}`}>Duration</label>
-                  <input
-                    type="text"
+                  <select
                     name={`duration_${i}`}
                     className="border-2 border-gray-400 w-20 ml-2 mr-2"
                     value={data.duration}
                     onChange={(e) =>
                       handleMedicineChange(i, "duration", e.target.value)
                     }
-                  />
+                  >
+                    <option value="">Select Duration</option>
+                    <option value="1 Day">1 Day</option>
+                    <option value="5 Day">5 Day</option>
+                    <option value="1 Week">1 Week</option>
+                    <option value="2 Week">2 Week</option>
+                    <option value="1 Month">1 Month</option>
+                    <option value="Continue">Continue</option>
+                    {/* Add more options as needed */}
+                  </select>
                 </div>
                 <div className="flex flex-col">
-                  <label htmlFor={`advice${i}`}>Note</label>
+                  <label htmlFor={`dose_code${i}`}>Dose Code</label>
+                  <select
+                    name={`dose_code${i}`}
+                    className="border-2 border-gray-400 w-20 ml-2 mr-2"
+                    value={data.dose_code}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "dose_code", e.target.value)
+                    }
+                  >
+                    <option value="">Select dose_code</option>
+                    <option value="1-1-1">1-1-1</option>
+                    <option value="1-1-0">1-1-0</option>
+                    <option value="1-0-1">1-0-1</option>
+                    <option value="1-0-0">1-0-0</option>
+                    <option value="0-1-1 ">0-1-1 </option>
+                    <option value="0-1-0  ">0-1-0 </option>
+                    <option value="0-0-1 ">0-0-1 </option>
+                    <option value="SOS">SOS</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`time${i}`}>Timing</label>
+                  <select
+                    name={`time${i}`}
+                    className="border-2 border-gray-400 w-20 ml-2"
+                    value={data.time}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "time", e.target.value)
+                    }
+                  >
+                    <option value="">Select Timing</option>
+                    <option value="After Meal">After Meal</option>
+                    <option value="Before Meal">Before Meal</option>
+                    <option value="Empty stomach">Empty stomach</option>
+                    {/* Add more options as needed */}
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`advice${i}`}>Advice</label>
                   <input
                     type="text"
                     name={`advice_${i}`}
-                    className="border-2 border-gray-400 w-34 ml-2"
+                    className="border-2 border-gray-400 w-32 ml-2"
                     value={data.advice}
                     onChange={(e) =>
                       handleMedicineChange(i, "advice", e.target.value)

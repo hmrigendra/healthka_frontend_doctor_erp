@@ -43,6 +43,11 @@ export default function Services() {
       return updatedInputs;
     });
   };
+
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const handleOnclose = () => setShowModal(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleSave = async () => {
     try {
       // Iterate over each item in serviceInputs array
@@ -60,8 +65,31 @@ export default function Services() {
         );
         console.log("Response:", response);
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (error: any) {
+      if (
+        error.toJSON().code === "ERR_BAD_REQUEST" ||
+        "ECONNREFUSED" ||
+        "ENETUNREACH"
+      ) {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue please check your internet or else call  HealthKa"
+        );
+      } else {
+        setIsLoading(false);
+        setMessage(error.toJSON().message);
+        setShowModal(true);
+      }
+      if (error instanceof TypeError) {
+        // Handle TypeError
+        setMessage("Visit history not found ");
+      } else {
+        // Handle other errors
+        setMessage("An error occurred while fetching patient data.");
+      }
+
+      setShowModal(true);
     }
   };
 
@@ -70,7 +98,7 @@ export default function Services() {
   const getData = async () => {
     try {
       const response = await axios.get(
-        "http://15.207.112.23:8000/api/v1/services/get_services",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_services`,
         {
           withCredentials: true,
         }
@@ -88,7 +116,7 @@ export default function Services() {
 
     try {
       const response = await axios.post(
-        "http://15.207.112.23:8000/api/v1/services/delete_service",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/delete_service`,
         {
           service_id: service_id, // Send service_id as part of an object
         },
@@ -101,9 +129,30 @@ export default function Services() {
 
       alert(`Delete user ${service_id}`);
       // Handle success response if needed
-    } catch (error) {
-      console.error("Error deleting service:", error);
-      // Handle error response if needed
+    } catch (error: any) {
+      setIsLoading(false);
+
+      // Network errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue. Please check your internet connection or contact HealthKa."
+        );
+      }
+      //  Axios errors
+      else if (error.response) {
+        //response error
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
+      //  other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
     }
   };
 

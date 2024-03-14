@@ -9,6 +9,7 @@ interface MedicineDataItem {
   time: string;
   duration: string;
   advice: string;
+  dose_code: string;
 }
 
 export function MedicineData({ medicineData }: Data) {
@@ -19,26 +20,33 @@ export function MedicineData({ medicineData }: Data) {
       </div>
       <div className="mb-2">
         <ul className="flex justify-between p-2 font-semibold">
-          <li className="min-w-[200px] ">Medicine name</li>
-          <li>Type</li>
+          <li className="min-w-[170px] ">Medicine name</li>
           <li>Dose</li>
-          {/* <li>Before/After</li> */}
-          <li>Duration</li>
-          <li>Extra</li>
+          <li>Timing</li>
+          <li>Advice</li>
         </ul>
         {medicineData ? (
           medicineData.map((data, i) => (
             <div key={i} className="flex justify-between pb-2 ">
-              <p className="text-sm min-w-[210px] max-w-[200px]  ">
+              <p className="text-sm min-w-[210px] max-w-[210px]  ">
                 {data.medicine_name}
               </p>
-              <p className="min-w-[70px] max-w-[70px]   flex justify-start truncate">
-                {data.medicine_type}
+              <p className="text-sm min-w-[125px] max-w-[125px] ">
+                {data.dose}{" "}
+                <span className="min-w-14 max-w-14 inline-block">
+                  {data.medicine_type}
+                </span>
+                <span className="ml-1 mr-1">|</span>
+                {data.dose_code}
               </p>
-              <p className="max-w-[1px]">{data.dose}</p>
+
               {/* <p>{data.time}</p> */}
-              <p className="max-w-[60px]">{data.duration}</p>
-              <p className="min-w-[75px] text-sm max-w-[75px]">{data.advice}</p>
+              <p className="text-sm min-w-[155px] max-w-[155px]">
+                {data.time} - {data.duration}
+              </p>
+              <p className="min-w-[105px] text-sm max-w-[105px]">
+                {data.advice}
+              </p>
             </div>
           ))
         ) : (

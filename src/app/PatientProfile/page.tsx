@@ -53,6 +53,7 @@ export default function PatientProfile({
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const handleOnclose = () => setShowModal(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   //Circular progress Indicator
 
@@ -93,15 +94,25 @@ export default function PatientProfile({
       } catch (error: any) {
         console.error("Error fetching patient data:", error);
 
-        if (error instanceof TypeError) {
-          // Handle TypeError
-          setMessage("Visit history not found ");
-        } else {
-          // Handle other errors
-          setMessage("An error occurred while fetching patient data.");
+        // Check for network-related errors
+        if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+          setIsLoading(false);
+          setShowModal(true);
+          setMessage(
+            "There is a network issue. Please check your internet connection or contact HealthKa."
+          );
         }
-
-        setShowModal(true);
+        // Handle Axios errors
+        else if (error.response) {
+          setMessage("An error occurred while fetching patient data.");
+          setShowModal(true);
+        }
+        // Handle other errors
+        else {
+          setIsLoading(false);
+          setMessage("An error occurred while fetching patient data.");
+          setShowModal(true);
+        }
       }
     };
 

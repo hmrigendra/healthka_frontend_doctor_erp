@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { DoctorProfileBody } from "../(Components)/DoctorProfile";
 import { Nav } from "../(Components)/Nav";
+import { Modal } from "../(Components)/Modal";
 
 interface DoctorData {
   doctor_id: string;
@@ -62,6 +63,13 @@ export default function DoctorsProfile() {
     message: "",
   });
 
+  //for the model
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const handleOnclose = () => setShowModal(false);
+
+  //for the circular progress indicator
+  const [isLoading, setIsLoading] = useState(false);
   const fetchData = async () => {
     try {
       const response = await axios.get<ApiResponse>(
@@ -71,8 +79,29 @@ export default function DoctorsProfile() {
         }
       );
       setDoctorData(response.data);
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
+    } catch (error: any) {
+      setIsLoading(false);
+
+      // network-related errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue. Please check your internet connection or contact HealthKa."
+        );
+      }
+      //  Axios errors
+      else if (error.response) {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
+      //  other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
     }
   };
 
@@ -83,6 +112,7 @@ export default function DoctorsProfile() {
   return (
     <div className="flex">
       <Nav />
+      <Modal visible={showModal} onClose={handleOnclose} response={message} />
       <div className="bg-production-white2 flex flex-col justify-center items-center ">
         <div className="w-4/5 p-4 rounded-lg  m-4 items-center bg-production-indigo">
           <p className="text-md font-semibold text-black">Doctors Profile</p>

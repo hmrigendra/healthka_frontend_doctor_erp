@@ -84,18 +84,37 @@ export function TableManual2({ header1, header2, header3, header4 }: any) {
       if (response.data.apiSuccess === 1 && response.data.resSuccess === 1) {
         setLength(response.data.nhHists);
         setPatients(realData);
+        setIsLoading(false);
       }
 
       if (response.data.apiSuccess === 1 && response.data.resSuccess === 0) {
         setMessage(response.data.message);
         setShowModal(true);
+        setIsLoading(false);
       }
     } catch (error: any) {
       setIsLoading(false);
-      setMessage(error.message);
-      setShowModal(true);
-    } finally {
-      setIsLoading(false);
+      // Network errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue. Please check your internet connection or contact HealthKa."
+        );
+      }
+      //  Axios errors
+      else if (error.response) {
+        //response error
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
+      //  other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
     }
   };
 
