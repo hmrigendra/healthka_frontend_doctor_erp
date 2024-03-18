@@ -158,7 +158,7 @@ export default function LoginPage() {
                       >
                         Login
                       </button>
-                      <Link href={"/signup"}>
+                      <Link href={"/Signup"}>
                         <button className=" ml-2 mr-2 rounded-lg w-full text-lg font-semibold text-white bg-blue-400 p-2 border border-blue-400 hover:text-black hover:bg-blue-200">
                           Sign Up
                         </button>

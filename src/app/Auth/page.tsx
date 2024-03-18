@@ -3,6 +3,9 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
+import { Modal } from "../(Components)/Modal";
+import Backdrop from "@mui/material/Backdrop/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Auth() {
   const router = useRouter();
@@ -11,6 +14,11 @@ export default function Auth() {
   };
   const [errors, setErrors] = useState(false);
   const data = useSearchParams();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const handleOnclose = () => setShowModal(false);
+  const [message, setMessage] = useState("");
   const AuthPost = async () => {
     const doctor_id = data.get("doctor_id");
 
@@ -27,6 +35,7 @@ export default function Auth() {
       ) {
         setErrors(true);
       } else {
+        setIsLoading(true);
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/authentication`,
           {
@@ -39,7 +48,7 @@ export default function Auth() {
         );
 
         console.log(response);
-
+        setIsLoading(false);
         if (response.data) {
           router.refresh;
           router.push("/LoginPage");
@@ -47,8 +56,10 @@ export default function Auth() {
           alert("something went wrong please check ");
         }
       }
-    } catch (error) {
-      alert(error);
+    } catch (error: any) {
+      setMessage(error.message);
+      setShowModal(true);
+      setIsLoading(false);
     }
   };
   const [view, setView] = useState(true);
@@ -60,79 +71,97 @@ export default function Auth() {
   });
   return (
     <div className="p-10 items-center flex flex-col justify-center">
-      <div className="flex flex-col items-center justify-center bg-red-100 p-4 rounded-md m-4 ">
-        <div className="relative">
-          <label className="mr-5" htmlFor="">
-            Phone number
-          </label>
-          <input
-            type="text"
-            className="p-1 m-2"
-            value={auth.phone_number}
-            onChange={(e) => setAuth({ ...auth, phone_number: e.target.value })}
-          />
-
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <FaUser className="text-gray-400" /> {/* Icon component */}
-          </span>
-        </div>
-        {auth.phone_number.length === 0 && errors ? (
-          <span className="text-sm text-blue-700">Field can not be null</span>
-        ) : (
-          ""
-        )}
-        <div className="relative">
-          <label className="mr-5" htmlFor="">
-            Password
-          </label>
-          <input
-            className="p-2 m-2"
-            value={auth.password}
-            onChange={(e) => setAuth({ ...auth, password: e.target.value })}
-            type={view === true ? "password" : "text"}
-            // onClick={(e) => e.stopPropagation()}
-          />
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <FaLock className="text-gray-400" onClick={() => setView(!view)} />
-            {/* Icon component */}
-          </span>
-        </div>
-        {auth.password.length === 0 && errors ? (
-          <span className="text-sm text-blue-700">Field can not be null</span>
-        ) : (
-          ""
-        )}
-        <div className="relative m-2">
-          <label className="mr-5 " htmlFor="">
-            Confirm password
-          </label>
-          <input
-            className="p-2"
-            value={auth.checkPassword}
-            onChange={(e) =>
-              setAuth({ ...auth, checkPassword: e.target.value })
-            }
-            type={confirmView === true ? "password" : "text"}
-          />
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <FaLock
-              className="text-gray-400"
-              onClick={() => setConfirmView(!confirmView)}
-            />
-          </span>
-        </div>
-        {auth.checkPassword.length === 0 && errors ? (
-          <span className="text-sm text-blue-700">Field can not be null</span>
-        ) : (
-          ""
-        )}
-        <button
-          onClick={AuthPost}
-          className="bg-blue-500 p-2 pl-6 pr-6 rounded-md text-white font-semibold mt-4"
+      <Modal visible={showModal} onClose={handleOnclose} response={message} />
+      {isLoading ? (
+        <Backdrop
+          sx={{
+            color: "#fff",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+          }}
+          open={isLoading} // Use isLoading state variable here
         >
-          Submit
-        </button>
-      </div>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : (
+        <div className="flex flex-col items-center justify-center bg-red-100 p-4 rounded-md m-4 ">
+          <div className="relative">
+            <label className="mr-5" htmlFor="">
+              Phone number
+            </label>
+            <input
+              type="text"
+              className="p-1 m-2"
+              value={auth.phone_number}
+              onChange={(e) =>
+                setAuth({ ...auth, phone_number: e.target.value })
+              }
+            />
+
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <FaUser className="text-gray-400" /> {/* Icon component */}
+            </span>
+          </div>
+          {auth.phone_number.length === 0 && errors ? (
+            <span className="text-sm text-blue-700">Field can not be null</span>
+          ) : (
+            ""
+          )}
+          <div className="relative">
+            <label className="mr-5" htmlFor="">
+              Password
+            </label>
+            <input
+              className="p-2 m-2"
+              value={auth.password}
+              onChange={(e) => setAuth({ ...auth, password: e.target.value })}
+              type={view === true ? "password" : "text"}
+              // onClick={(e) => e.stopPropagation()}
+            />
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <FaLock
+                className="text-gray-400"
+                onClick={() => setView(!view)}
+              />
+              {/* Icon component */}
+            </span>
+          </div>
+          {auth.password.length === 0 && errors ? (
+            <span className="text-sm text-blue-700">Field can not be null</span>
+          ) : (
+            ""
+          )}
+          <div className="relative m-2">
+            <label className="mr-5 " htmlFor="">
+              Confirm password
+            </label>
+            <input
+              className="p-2"
+              value={auth.checkPassword}
+              onChange={(e) =>
+                setAuth({ ...auth, checkPassword: e.target.value })
+              }
+              type={confirmView === true ? "password" : "text"}
+            />
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <FaLock
+                className="text-gray-400"
+                onClick={() => setConfirmView(!confirmView)}
+              />
+            </span>
+          </div>
+          {auth.checkPassword.length === 0 && errors ? (
+            <span className="text-sm text-blue-700">Field can not be null</span>
+          ) : (
+            ""
+          )}
+          <button
+            onClick={AuthPost}
+            className="bg-blue-500 p-2 pl-6 pr-6 rounded-md text-white font-semibold mt-4"
+          >
+            Submit
+          </button>
+        </div>
+      )}
     </div>
   );
 }
