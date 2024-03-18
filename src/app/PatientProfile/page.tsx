@@ -84,6 +84,9 @@ export default function PatientProfile({
         }
         if (responseData.data.length > 0) {
           const patientData = responseData.data;
+
+          console.log(response.data);
+
           setPrescriptions(patientData);
         }
 

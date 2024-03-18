@@ -54,16 +54,17 @@ export default function InvoicePage() {
 
       if (
         patientData.patient_name.length === 0 ||
-        patientData.phone_number.length < 10 ||
+        patientData.phone_number.length < 9 ||
         patientData.age === 0 ||
         patientData.gender.length === 0
       ) {
         setShowModal(true);
-        return setErrors(true);
+        setErrors(true);
       } else {
         const realData = outPut();
         const realTime = TimeOutPut();
         setIsLoading(true);
+
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/create_prescription`,
           {
@@ -92,6 +93,8 @@ export default function InvoicePage() {
 
         if (response.data.apiSuccess === 1) {
           setMessage(response.data.message);
+          console.log(response.data.message);
+
           setShowModal(true);
           setIsLoading(false);
         }
@@ -281,6 +284,10 @@ export default function InvoicePage() {
     const name = e.target.name; // Use e.target.name to get the name of the input field
     const value = e.target.value;
 
+    if (value > 1) {
+      setErrors(false);
+    }
+
     setPatientData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -359,21 +366,32 @@ export default function InvoicePage() {
   };
 
   useEffect(() => {
+    if (
+      patientData.patient_name.length > 0 ||
+      patientData.age > 0 ||
+      patientData.phone_number.length > 0 ||
+      patientData.gender.length > 0
+    ) {
+      if (errors) {
+        setErrors(false);
+      }
+    }
+  }, [patientData, errors]);
+  useEffect(() => {
     const storedDoctorData = JSON.parse(localStorage.getItem("doctor") || "{}");
     const storedClinicAddress = JSON.parse(
       localStorage.getItem("clinicAddress") || "{}"
     );
     const storedClinicData = JSON.parse(localStorage.getItem("clinic") || "{}");
 
-    console.log(storedDoctorData);
-    console.log(storedDoctorData[0].first_name);
+    console.log(storedClinicData[0].start_time);
 
     setDoctorData({
       first_name: storedDoctorData[0].first_name,
       second_name: storedDoctorData[0].second_name,
       phone_number: storedDoctorData[0].phone_number,
       email: storedDoctorData[0].email,
-      qualification: storedDoctorData[0].email,
+      qualification: storedDoctorData[0].qualification,
       specialization: storedDoctorData[0].specialization,
     });
 
@@ -433,12 +451,26 @@ export default function InvoicePage() {
             prescriptionTime={TimeOutPut()}
           />
           <CaseHistory case_history={case_history} vitals={vitals} />
-          <Diagnosis diagnosis_history={diagnosis_history} test={test} />
+          {diagnosis_history.length > 1 ||
+          test.some((data) => data.test_name.length > 1) ? (
+            <Diagnosis diagnosis_history={diagnosis_history} test={test} />
+          ) : null}
+
           <MedicineData medicineData={medicineData} />
-          <GeneralAdvice general_advice={general_advice} />
-          <Referral referral={referral} />
-          <NextVisit FollowUpDate={FollowUpDate} FollowUpTime={FollowUpTime} />
-          <SurgeryAdvice surgery_advice={surgery_advice} />
+          {general_advice.length > 1 ? (
+            <GeneralAdvice general_advice={general_advice} />
+          ) : null}
+
+          {referral.length > 1 ? <Referral referral={referral} /> : null}
+          {FollowUpDate.length > 1 || FollowUpTime.length > 1 ? (
+            <NextVisit
+              FollowUpDate={FollowUpDate}
+              FollowUpTime={FollowUpTime}
+            />
+          ) : null}
+          {surgery_advice.length > 1 ? (
+            <SurgeryAdvice surgery_advice={surgery_advice} />
+          ) : null}
         </div>
       )}
 

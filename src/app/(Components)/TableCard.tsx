@@ -14,7 +14,7 @@ interface PrescriptionData {
 }
 
 interface TableCardProps {
-  prescriptions: PrescriptionData[]; // Define the prop type
+  prescriptions: PrescriptionData[];
 }
 type DateFormatType = {
   year?: "numeric" | "2-digit";
@@ -61,55 +61,56 @@ export function TableCard({ prescriptions }: TableCardProps) {
           </tr>
         </thead>
       </table>
-      {prescriptions.map((data) => (
-        <div key={data._id.toString()} className="p-1">
-          <table className="w-full bg-indigo-300 rounded-md">
-            <tbody>
-              <tr className="flex gap-12">
-                <td className="flex min-w-[100px] max-w-[100px] justify-center  items-center m-3 truncate   text-sm">
-                  {data.prescription_id}
-                </td>
+      {prescriptions &&
+        prescriptions.map((data) => (
+          <div key={data._id.toString()} className="p-1">
+            <table className="w-full bg-indigo-300 rounded-md">
+              <tbody>
+                <tr className="flex gap-12">
+                  <td className="flex min-w-[100px] max-w-[100px] justify-center  items-center m-3 truncate   text-sm">
+                    {data.prescription_id}
+                  </td>
 
-                <p className="border-2 border-black"></p>
-                <td className="flex justify-center min-w-[150px] items-center  text-sm">
-                  {formatDate(data.createdAt.toString())}
-                </td>
-                <p className="border-2 border-black"></p>
-                <td className="flex justify-center min-w-[150px] max-w-[200px] overflow-hidden  text-sm">
-                  {data.case_history}
-                </td>
+                  <p className="border-2 border-black"></p>
+                  <td className="flex justify-center min-w-[150px] items-center  text-sm">
+                    {formatDate(data.createdAt.toString())}
+                  </td>
+                  <p className="border-2 border-black"></p>
+                  <td className="flex justify-center min-w-[150px] max-w-[200px] overflow-hidden  text-sm">
+                    {data.case_history}
+                  </td>
 
-                <p className="border-2 border-black"></p>
-                <td className="flex justify-center min-w-[100px] items-center  text-sm">
-                  {data.FollowUpDate ?? "no follow-up"}
-                </td>
+                  <p className="border-2 border-black"></p>
+                  <td className="flex justify-center min-w-[100px] items-center  text-sm">
+                    {data.FollowUpDate ?? "no follow-up"}
+                  </td>
 
-                <p className="border-2 border-black"></p>
-                {isLoading ? (
-                  <Backdrop
-                    sx={{
-                      color: "#fff",
-                      zIndex: (theme) => theme.zIndex.drawer + 1,
-                    }}
-                    open={isLoading} // Use isLoading state variable here
-                  >
-                    <CircularProgress color="inherit" />
-                  </Backdrop>
-                ) : (
-                  <Link href={`/InvoiceAgain/${data.prescription_id}`}>
-                    <td
-                      onClick={() => setIsLoading(true)}
-                      className="flex justify-center align-middle items-center min-w-40 text-sm pr-2"
+                  <p className="border-2 border-black"></p>
+                  {isLoading ? (
+                    <Backdrop
+                      sx={{
+                        color: "#fff",
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                      }}
+                      open={isLoading} // Use isLoading state variable here
                     >
-                      <FaFilePrescription className="size-10" />
-                    </td>
-                  </Link>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      ))}
+                      <CircularProgress color="inherit" />
+                    </Backdrop>
+                  ) : (
+                    <Link href={`/InvoiceAgain/${data.prescription_id}`}>
+                      <td
+                        onClick={() => setIsLoading(true)}
+                        className="flex justify-center align-middle items-center min-w-40 text-sm pr-2"
+                      >
+                        <FaFilePrescription className="size-10" />
+                      </td>
+                    </Link>
+                  )}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ))}
     </div>
   );
 }

@@ -26,10 +26,17 @@ export function CaseHistory({ case_history, vitals }: CaseHistoryProps) {
         <div className="pl-4 flex flex-wrap">
           {vitals.map((data, i) => (
             <div key={i}>
-              <span className="pr-2  pl-1">{data.vites_name}</span>
-              <span className="pr-2 border-r-2 border-black">
-                {data.vite_result}
-              </span>
+              {data.vites_name.length > 1 && (
+                <span className="pr-2  pl-1">{data.vites_name} :</span>
+              )}
+              {data.vites_name.length > 1 && (
+                <span className="pr-2 border-r-2 border-black">
+                  {data.vite_result}
+                </span>
+              )}
+              {i !== vitals.length - 1 && data.vites_name.length > 1 && (
+                <span>|</span>
+              )}
             </div>
           ))}
         </div>

@@ -45,43 +45,43 @@ export default function ClinicProfile() {
         clinic.working_days.length === 0
       ) {
         setErrors(true);
-      }
+      } else {
+        const doctor_id = searchParams.get("doctor_id");
+        const name = searchParams.get("doctor_name");
+        console.log(doctor_id);
 
-      const doctor_id = searchParams.get("doctor_id");
-      const name = searchParams.get("doctor_name");
-      console.log(doctor_id);
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/add_clinic`,
-        {
-          clinic_name: clinic.clinic_name,
-          start_time: clinic.start_time,
-          end_time: clinic.end_time,
-          working_days: clinic.working_days,
-          clinic_phone_number: clinic.clinic_phone_number,
-          gst: clinic.GST,
-          house_number: clinicAddress.house_number,
-          lane: clinicAddress.lane,
-          address_one: clinicAddress.address_one,
-          landmark: clinicAddress.landmark,
-          city: clinicAddress.city,
-          state: clinicAddress.state,
-          pin_code: clinicAddress.pin_code,
-          clinic_type: 1,
-          country: "INDIA",
-          doctor_id: doctor_id,
-        }
-      );
-
-      if (response) {
-        console.log("====================================");
-        console.log(response.data.clinicDoctorsResult.result);
-        console.log("====================================");
-        console.log("Response:", response.data.clinicDoctorsResult.result);
-
-        router.push(
-          `/Auth?doctor_id=${doctor_id}&name=${name}&clinic_id=${response.data.clinicDoctorsResult.result}`
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/add_clinic`,
+          {
+            clinic_name: clinic.clinic_name,
+            start_time: clinic.start_time,
+            end_time: clinic.end_time,
+            working_days: clinic.working_days,
+            clinic_phone_number: clinic.clinic_phone_number,
+            gst: clinic.GST,
+            house_number: clinicAddress.house_number,
+            lane: clinicAddress.lane,
+            address_one: clinicAddress.address_one,
+            landmark: clinicAddress.landmark,
+            city: clinicAddress.city,
+            state: clinicAddress.state,
+            pin_code: clinicAddress.pin_code,
+            clinic_type: 1,
+            country: "INDIA",
+            doctor_id: doctor_id,
+          }
         );
+
+        if (response) {
+          console.log("====================================");
+          console.log(response.data.clinicDoctorsResult.result);
+          console.log("====================================");
+          console.log("Response:", response.data.clinicDoctorsResult.result);
+
+          router.push(
+            `/Auth?doctor_id=${doctor_id}&name=${name}&clinic_id=${response.data.clinicDoctorsResult.result}`
+          );
+        }
       }
     } catch (error) {
       console.error("Synchronous error:", error);

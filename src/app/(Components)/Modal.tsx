@@ -6,7 +6,11 @@ export function Modal({ visible, response, onClose }: any) {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-30 backdrop-blur-sm">
       <div className="bg-white p-2 rounded-md w-96 h-2/5 ">
-        <p className="font-semibold text-2xl p-4 ">Error Occur</p>
+        <p className="font-semibold text-2xl p-4 ">
+          {response === "Prescription Created Successfully"
+            ? ""
+            : "Error Occur"}
+        </p>
         <p className="text-lg p-4">{response}</p>
         <p className="text-lg p-4 pb-2">
           {response === "Prescription Created Successfully"

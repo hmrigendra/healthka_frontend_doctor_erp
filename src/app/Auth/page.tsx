@@ -9,6 +9,7 @@ export default function Auth() {
   const testRouter = () => {
     router.push("/LoginPage");
   };
+  const [errors, setErrors] = useState(false);
   const data = useSearchParams();
   const AuthPost = async () => {
     const doctor_id = data.get("doctor_id");
@@ -19,24 +20,32 @@ export default function Auth() {
     console.log(name);
 
     try {
-      const response = await axios.post(
-        "http://15.207.112.23:8000/api/v1/doctors/authentication",
-        {
-          doctor_id: doctor_id,
-          phone_number: auth.phone_number,
-          password: auth.password,
-          clinic_id: clinic_id,
-          doctor_name: name,
-        }
-      );
-
-      console.log(response);
-
-      if (response.data) {
-        router.refresh;
-        router.push("/LoginPage");
+      if (
+        auth.phone_number.length === 0 ||
+        auth.password.length === 0 ||
+        auth.checkPassword.length === 0
+      ) {
+        setErrors(true);
       } else {
-        alert("something went wrong please check ");
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/authentication`,
+          {
+            doctor_id: doctor_id,
+            phone_number: auth.phone_number,
+            password: auth.password,
+            clinic_id: clinic_id,
+            doctor_name: name,
+          }
+        );
+
+        console.log(response);
+
+        if (response.data) {
+          router.refresh;
+          router.push("/LoginPage");
+        } else {
+          alert("something went wrong please check ");
+        }
       }
     } catch (error) {
       alert(error);
@@ -62,10 +71,16 @@ export default function Auth() {
             value={auth.phone_number}
             onChange={(e) => setAuth({ ...auth, phone_number: e.target.value })}
           />
+
           <span className="absolute inset-y-0 right-0 flex items-center pr-3">
             <FaUser className="text-gray-400" /> {/* Icon component */}
           </span>
         </div>
+        {auth.phone_number.length === 0 && errors ? (
+          <span className="text-sm text-blue-700">Field can not be null</span>
+        ) : (
+          ""
+        )}
         <div className="relative">
           <label className="mr-5" htmlFor="">
             Password
@@ -82,6 +97,11 @@ export default function Auth() {
             {/* Icon component */}
           </span>
         </div>
+        {auth.password.length === 0 && errors ? (
+          <span className="text-sm text-blue-700">Field can not be null</span>
+        ) : (
+          ""
+        )}
         <div className="relative m-2">
           <label className="mr-5 " htmlFor="">
             Confirm password
@@ -101,6 +121,11 @@ export default function Auth() {
             />
           </span>
         </div>
+        {auth.checkPassword.length === 0 && errors ? (
+          <span className="text-sm text-blue-700">Field can not be null</span>
+        ) : (
+          ""
+        )}
         <button
           onClick={AuthPost}
           className="bg-blue-500 p-2 pl-6 pr-6 rounded-md text-white font-semibold mt-4"

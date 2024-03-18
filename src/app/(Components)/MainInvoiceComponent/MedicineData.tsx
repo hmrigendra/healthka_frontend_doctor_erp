@@ -36,13 +36,16 @@ export function MedicineData({ medicineData }: Data) {
                 <span className="min-w-14 max-w-14 inline-block">
                   {data.medicine_type}
                 </span>
-                <span className="ml-1 mr-1">|</span>
+                {data.medicine_type.length > 1 && (
+                  <span className="ml-1 mr-1">|</span>
+                )}
                 {data.dose_code}
               </p>
 
               {/* <p>{data.time}</p> */}
               <p className="text-sm min-w-[155px] max-w-[155px]">
-                {data.time} - {data.duration}
+                {data.time} {data.time.length > 1 && <span> - </span>}{" "}
+                {data.duration}
               </p>
               <p className="min-w-[105px] text-sm max-w-[105px]">
                 {data.advice}

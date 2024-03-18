@@ -270,7 +270,7 @@ export default function InvoicePage({ params }: any) {
       second_name: storedDoctorData[0].second_name,
       phone_number: storedDoctorData[0].phone_number,
       email: storedDoctorData[0].email,
-      qualification: storedDoctorData[0].email,
+      qualification: storedDoctorData[0].qualification,
       specialization: storedDoctorData[0].specialization,
     });
 
@@ -318,12 +318,27 @@ export default function InvoicePage({ params }: any) {
             prescriptionTime={prescriptionTime}
           />
           <CaseHistory case_history={case_history} vitals={vitals} />
-          <Diagnosis diagnosis_history={diagnosis_history} test={test} />
+
+          {diagnosis_history.length > 1 ||
+          test.some((data) => data.test_name.length > 1) ? (
+            <Diagnosis diagnosis_history={diagnosis_history} test={test} />
+          ) : null}
+
           <MedicineData medicineData={medicineData} />
-          <GeneralAdvice general_advice={general_advice} />
-          <Referral referral={referral} />
-          <NextVisit FollowUpDate={FollowUpDate} FollowUpTime={FollowUpTime} />
-          <SurgeryAdvice surgery_advice={surgery_advice} />
+          {general_advice.length > 1 ? (
+            <GeneralAdvice general_advice={general_advice} />
+          ) : null}
+
+          {referral.length > 1 ? <Referral referral={referral} /> : null}
+          {FollowUpDate.length > 1 || FollowUpTime.length > 1 ? (
+            <NextVisit
+              FollowUpDate={FollowUpDate}
+              FollowUpTime={FollowUpTime}
+            />
+          ) : null}
+          {surgery_advice.length > 1 ? (
+            <SurgeryAdvice surgery_advice={surgery_advice} />
+          ) : null}
         </div>
       )}
 

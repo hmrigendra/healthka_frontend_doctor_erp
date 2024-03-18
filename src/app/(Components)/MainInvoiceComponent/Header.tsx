@@ -57,7 +57,7 @@ export function Header({ doctorData, clinicAddress, clinicData }: Data) {
         <div>
           <p>
             {" "}
-            <span className="mr-1 font-semibold"> Qualification:</span>{" "}
+            <span className="mr-1 font-semibold"> Qualification:</span>
             {doctorData.qualification}
           </p>
           <p>
@@ -81,7 +81,10 @@ export function Header({ doctorData, clinicAddress, clinicData }: Data) {
           </p>
         </div>
         <div>
-          <p>{(clinicAddress.house_number, clinicAddress.address_one)}</p>
+          <p>
+            <span className="mr-1 font-semibold"> Timings: </span>
+            {clinicData.start_time} TO {clinicData.end_time}
+          </p>
           <p>
             {clinicAddress.address_one},{clinicAddress.landmark},
             {clinicAddress.lane}

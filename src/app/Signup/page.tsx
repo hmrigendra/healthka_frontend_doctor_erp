@@ -61,42 +61,43 @@ export default function SignUp() {
         qualification.year_of_passing.length === 0
       ) {
         setErrors(true);
-      }
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/create-doctor-profile`,
-        {
-          first_name: doctorProfile.first_name,
-          last_name: doctorProfile.last_name,
-          DOB: doctorProfile.DOB,
-          gender: doctorProfile.gender,
-          phone_number: doctorProfile.phone_number,
-          email: doctorProfile.email,
-          qualification: qualification.qualification,
-          specialization: qualification.specialization,
-          personal_clinic: clinicOwned,
-
-          college_name: qualification.College_name,
-          year_of_passing: qualification.year_of_passing,
-          experience: qualification.experience,
-          house_number: doctorAddress.house_number,
-          lane: doctorAddress.lane,
-          address_one: doctorAddress.address_one,
-          landmark: doctorAddress.landmark,
-          city: doctorAddress.city,
-          state: doctorAddress.state,
-          pin_code: doctorAddress.pin_code,
-          country: "INDIA",
-        }
-      );
-
-      if (!response) {
-        alert("error while posting data");
       } else {
-        router.refresh();
-        if (clinicOwned === 1) {
-          router.push(
-            `/ClinicProfile?doctor_id=${response.data.data.results}&doctor_name=${doctorProfile.first_name}`
-          );
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/doctors/create-doctor-profile`,
+          {
+            first_name: doctorProfile.first_name,
+            last_name: doctorProfile.last_name,
+            DOB: doctorProfile.DOB,
+            gender: doctorProfile.gender,
+            phone_number: doctorProfile.phone_number,
+            email: doctorProfile.email,
+            qualification: qualification.qualification,
+            specialization: qualification.specialization,
+            personal_clinic: clinicOwned,
+
+            college_name: qualification.College_name,
+            year_of_passing: qualification.year_of_passing,
+            experience: qualification.experience,
+            house_number: doctorAddress.house_number,
+            lane: doctorAddress.lane,
+            address_one: doctorAddress.address_one,
+            landmark: doctorAddress.landmark,
+            city: doctorAddress.city,
+            state: doctorAddress.state,
+            pin_code: doctorAddress.pin_code,
+            country: "INDIA",
+          }
+        );
+
+        if (!response) {
+          alert("error while posting data");
+        } else {
+          router.refresh();
+          if (clinicOwned === 1) {
+            router.push(
+              `/ClinicProfile?doctor_id=${response.data.data.results}&doctor_name=${doctorProfile.first_name}`
+            );
+          }
         }
       }
     } catch (error) {

@@ -18,7 +18,7 @@ export function Diagnosis({ diagnosis_history, test }: data) {
       </div>
       <div>
         <div className="border-b-4 border-black">
-          <p className="text-lg font-bold  mt-2">Test</p>
+          <p className="text-lg font-bold  mt-2">Investigation</p>
         </div>
         <div>
           {test.map((data, i) => (
