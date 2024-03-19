@@ -121,9 +121,7 @@ export default function Services() {
           service_id: service_id, // Send service_id as part of an object
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true,
         }
       );
 
