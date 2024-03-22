@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Link from "next/link";
 import { useState } from "react";
 import { FaFilePrescription } from "react-icons/fa";
+import { FaFileInvoice } from "react-icons/fa";
 
 interface PrescriptionData {
   _id: String;
@@ -15,6 +16,7 @@ interface PrescriptionData {
 
 interface TableCardProps {
   prescriptions: PrescriptionData[];
+  bill: any[];
 }
 type DateFormatType = {
   year?: "numeric" | "2-digit";
@@ -43,7 +45,7 @@ const formatDate = (dateString: string) => {
   return formattedDate;
 };
 
-export function TableCard({ prescriptions }: TableCardProps) {
+export function TableCard({ prescriptions, bill }: TableCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="flex flex-col items-center ml-32 w-3/4 p-6 bg-white shadow-lg">
@@ -56,8 +58,8 @@ export function TableCard({ prescriptions }: TableCardProps) {
             <th className="ml-2">UID</th>
             <th className=" pl-32 ml-2 flex justify-center">Date</th>
             <th className="pl-20 ml-4  min-w-[350px]">Reason for visit</th>
-            <th className="  ml-2 min-w-[120px]">Follow Up</th>
-            <th className="pr-16 ml-2">Prescription</th>
+            <th className="   min-w-[120px]">Follow Up</th>
+            <th className="pr-6 ml-2">Prescription/Bill</th>
           </tr>
         </thead>
       </table>
@@ -97,14 +99,41 @@ export function TableCard({ prescriptions }: TableCardProps) {
                       <CircularProgress color="inherit" />
                     </Backdrop>
                   ) : (
-                    <Link href={`/InvoiceAgain/${data.prescription_id}`}>
-                      <td
-                        onClick={() => setIsLoading(true)}
-                        className="flex justify-center align-middle items-center min-w-40 text-sm pr-2"
-                      >
-                        <FaFilePrescription className="size-10" />
-                      </td>
-                    </Link>
+                    <>
+                      <div className="flex justify-between  align-middle items-center min-w-40 text-sm pr-2">
+                        <div>
+                          <Link href={`/InvoiceAgain/${data.prescription_id}`}>
+                            <td
+                              onClick={() => setIsLoading(true)}
+                              className="mr-10"
+                            >
+                              <FaFilePrescription className="size-10" />
+                            </td>
+                          </Link>
+                        </div>
+
+                        <div>
+                          {bill
+                            .filter(
+                              (billItem) =>
+                                billItem.prescription_id ===
+                                data.prescription_id
+                            )
+                            .map((d: any, i: any) => (
+                              <Link
+                                href={{
+                                  pathname: `/Bill/${d.prescription_id}`,
+                                }}
+                                key={i}
+                              >
+                                <td onClick={() => setIsLoading(true)}>
+                                  <FaFileInvoice className="size-10" />
+                                </td>
+                              </Link>
+                            ))}
+                        </div>
+                      </div>
+                    </>
                   )}
                 </tr>
               </tbody>

@@ -45,8 +45,10 @@ export default function InvoicePage({ params }: any) {
       }
 
       const prescriptionData = response.data.data;
+      console.log("this is for patient_id", response.data.data.patient_id);
 
       setPatientData({
+        patient_id: response.data.data.patient_id,
         patient_name: prescriptionData.patient_name,
         phone_number: prescriptionData.phone_number,
         age: prescriptionData.age,
@@ -67,19 +69,27 @@ export default function InvoicePage({ params }: any) {
 
       // Handle response here
     } catch (error: any) {
-      if (
-        error.toJSON().code === "ERR_BAD_REQUEST" ||
-        "ECONNREFUSED" ||
-        "ENETUNREACH"
-      ) {
+      setIsLoading(false);
+      // Network errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
         setIsLoading(false);
         setShowModal(true);
         setMessage(
-          "There is a network issue please check your internet or else call  HealthKa"
+          "There is a network issue. Please check your internet connection or contact HealthKa."
         );
-      } else {
+      }
+      //  Axios errors
+      else if (error.response) {
+        //response error
+
         setIsLoading(false);
-        setMessage(error.toJSON().message);
+        setMessage("An error occurred while fetching patient data.");
+        setShowModal(true);
+      }
+      //  other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching patient data.");
         setShowModal(true);
       }
     }
@@ -88,7 +98,7 @@ export default function InvoicePage({ params }: any) {
   const Router = useRouter();
   const SendCustomerData = () => {
     Router.push(`/Bill?customer_name=${patientData.patient_name}&number=${patientData.phone_number}
-    &age=${patientData.age}&gender=${patientData.gender}`);
+    &age=${patientData.age}&gender=${patientData.gender}&patient_id=${patientData.patient_id}&prescription_id=${params.id}`);
   };
 
   const handlePrint = () => {
@@ -101,6 +111,7 @@ export default function InvoicePage({ params }: any) {
 
   //Customer
   const [patientData, setPatientData] = useState({
+    patient_id: "",
     patient_name: "",
     phone_number: "",
     age: 0,

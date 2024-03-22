@@ -15,6 +15,7 @@ interface PatientData {
   gender: string;
   age: number;
 }
+
 interface prescriptionData {
   _id: string;
   prescription_id: String;
@@ -38,6 +39,7 @@ export default function PatientProfile({
 }) {
   const [prescriptions, setPrescriptions] = useState<prescriptionData[]>([]);
   const [dataLength, setDataLength] = useState<number>(0);
+  const [billPrescription, setBillPrescription] = useState([]);
   const [patient, setPatient] = useState<PatientData>({
     id: "",
     doctor_id: "",
@@ -67,26 +69,24 @@ export default function PatientProfile({
           }
         );
 
-        console.log("====================================");
-        console.log("True Data", response);
-        console.log("====================================");
         const responseData = response.data;
         setDataLength(responseData.dataLength);
-        const [patientData]: any = responseData.patientData; // Destructure the array
-
-        if (patientData) {
-          setPatient(patientData);
-        }
 
         if (response.data.statusCode === 404) {
           setMessage(responseData.message.toString());
           setShowModal(true);
+          return; // Stop execution if patient not found
         }
+
+        const [patientData]: any = responseData.patientData; // Destructure the array
+
+        if (patientData) {
+          setPatient(patientData);
+          await fetchBills(patientData.patient_id);
+        }
+
         if (responseData.data.length > 0) {
           const patientData = responseData.data;
-
-          console.log(response.data);
-
           setPrescriptions(patientData);
         }
 
@@ -96,26 +96,48 @@ export default function PatientProfile({
         }
       } catch (error: any) {
         console.error("Error fetching patient data:", error);
+        handleFetchError(error);
+      }
+    };
 
-        // Check for network-related errors
-        if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
-          setIsLoading(false);
-          setShowModal(true);
-          setMessage(
-            "There is a network issue. Please check your internet connection or contact HealthKa."
-          );
+    const fetchBills = async (patientId: string) => {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/get_all_bill`,
+          { patient_id: patientId },
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.data) {
+          setBillPrescription(response.data.data);
         }
-        // Handle Axios errors
-        else if (error.response) {
-          setMessage("An error occurred while fetching patient data.");
-          setShowModal(true);
-        }
-        // Handle other errors
-        else {
-          setIsLoading(false);
-          setMessage("An error occurred while fetching patient data.");
-          setShowModal(true);
-        }
+      } catch (error) {
+        console.error("Error fetching bills:", error);
+        handleFetchError(error);
+      }
+    };
+
+    const handleFetchError = (error: any) => {
+      // Check for network-related errors
+      if (error.code === "ECONNREFUSED" || error.code === "ENETUNREACH") {
+        setIsLoading(false);
+        setShowModal(true);
+        setMessage(
+          "There is a network issue. Please check your internet connection or contact HealthKa."
+        );
+      }
+      // Handle Axios errors
+      else if (error.response) {
+        setMessage("An error occurred while fetching data.");
+        setShowModal(true);
+      }
+      // Handle other errors
+      else {
+        setIsLoading(false);
+        setMessage("An error occurred while fetching data.");
+        setShowModal(true);
       }
     };
 
@@ -131,7 +153,7 @@ export default function PatientProfile({
       {prescriptions && (
         <PatientProfileHeader dataLength={dataLength} PatientData={patient} />
       )}
-      <TableCard prescriptions={prescriptions} />
+      <TableCard prescriptions={prescriptions} bill={billPrescription} />
     </>
   );
 }

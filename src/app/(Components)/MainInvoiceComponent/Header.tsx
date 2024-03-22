@@ -35,7 +35,7 @@ interface Data {
 
 export function Header({ doctorData, clinicAddress, clinicData }: Data) {
   return (
-    <header className="border-y-2 border-black flex justify-between">
+    <header className="border-y-2 border-black flex justify-between pb-2 pt-2">
       <div className="flex flex-col text-sm">
         <div>
           <p>

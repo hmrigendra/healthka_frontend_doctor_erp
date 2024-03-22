@@ -503,26 +503,6 @@ export default function InvoicePage() {
               </button>
             )}
           </div>
-          <div className="">
-            {isLoading ? (
-              <Backdrop
-                sx={{
-                  color: "#fff",
-                  zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                open={isLoading}
-              >
-                <CircularProgress color="inherit" />
-              </Backdrop>
-            ) : (
-              <button
-                onClick={SendCustomerData}
-                className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
-              >
-                Bill
-              </button>
-            )}
-          </div>
         </div>
       )}
       {active === false && (
