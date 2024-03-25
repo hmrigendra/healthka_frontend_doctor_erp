@@ -9,6 +9,7 @@ import { Referral } from "../(Components)/MainInvoiceComponent/Referral";
 import { NextVisit } from "../(Components)/MainInvoiceComponent/NextVisit";
 import { SurgeryAdvice } from "../(Components)/MainInvoiceComponent/SurgeryAdvice";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { IoIosArrowDown } from "react-icons/io";
 
 import { FaMinusCircle } from "react-icons/fa";
 
@@ -116,6 +117,10 @@ export default function InvoicePage() {
     &age=${patientData.age}&gender=${patientData.gender}`);
   };
 
+  //Show Options
+
+  const [show, setShow] = useState(false);
+
   //Use State division for data
 
   //Customer
@@ -204,10 +209,13 @@ export default function InvoicePage() {
       medicine_name: "",
       medicine_type: "", //tablet...
 
-      dose: "", //number of tab ..
+      dose: "", //dose number  && need to add dose unit
+      dose_unit: "",
+
       advice: "",
       time: "", //after or before
-      duration: "", // 1 week / days
+      duration: "", // Duration number && duration unit
+      duration_unit: "",
       dose_code: "", // 1-0-1
     },
   ]);
@@ -238,6 +246,8 @@ export default function InvoicePage() {
         duration: "",
         advice: "",
         dose_code: "",
+        dose_unit: "",
+        duration_unit: "",
       },
     ]);
   };
@@ -619,7 +629,7 @@ export default function InvoicePage() {
             </div>
           </div>
           <div className="flex flex-col">
-            <label htmlFor="chief_complains">Chief Complains</label>
+            <label htmlFor="chief_complains">Complaints</label>
             <textarea
               name="message"
               id="message"
@@ -627,7 +637,7 @@ export default function InvoicePage() {
               value={case_history}
               onChange={(e) => setComplains(e.target.value)}
             ></textarea>
-            <p>systematic_history</p>
+            <p>Clinical Notes</p>
 
             <div>
               {vitals.map((vital, index) => (
@@ -721,7 +731,7 @@ export default function InvoicePage() {
                   <input
                     type="text"
                     name={`medicine_name_${i}`}
-                    className="border-2 border-gray-400 w-52 ml-2 mr-2"
+                    className="border-2 border-gray-400 w-32 text-sm ml-2 mr-2"
                     value={data.medicine_name}
                     onChange={(e) => {
                       console.log("====================================");
@@ -750,25 +760,149 @@ export default function InvoicePage() {
                     <option value="drop">drop</option>
                     <option value="injection">injection</option>
                     <option value="ointment">ointment</option>
+                    <option value="capsule">capsule</option>
+                    <option value="Syrup">Syrup</option>
+                    <option value="Suspension">Suspension</option>
+                    <option value="cream">cream</option>
+                    <option value="gel">gel</option>
                   </select>
                 </div>
 
                 <div className="flex flex-col">
                   <label htmlFor={`dose_${i}`}>Dose</label>
-                  <input
-                    type="text"
-                    name={`dose_${i}`}
-                    className="border-2 border-gray-400 w-10 ml-2 mr-2"
-                    value={data.dose}
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      // Validate if the input value contains only numeric characters
-                      if (/^\d*$/.test(inputValue)) {
-                        // If valid, update the state
+                  <div className="flex  ml-2 mr-2 ">
+                    <input
+                      type="text"
+                      name={`dose_${i}`}
+                      className="border-2 border-gray-400 w-10 "
+                      value={data.dose}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
                         handleMedicineChange(i, "dose", inputValue);
-                      }
-                    }}
-                  />
+                        // Validate if the input value contains only numeric characters
+                      }}
+                    />
+                    <IoIosArrowDown
+                      className="text-black absolute ml-6 mt-[6px]"
+                      onClick={() => setShow(!show)}
+                    />
+                  </div>
+                  {show && (
+                    <span className="shadow-lg bg-white w-12 absolute mt-10">
+                      <ul>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="1"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          1
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="2"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          2
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="3"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          3
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="4"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          4
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="5"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          5
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="6"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          6
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="7"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          7
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="8"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          8
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="9"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          9
+                        </li>
+                        <li
+                          className="hover:bg-blue-400 hover:text-white hover:font-bold pl-2"
+                          value="10"
+                          onClick={(e: any) => {
+                            const inputValue = e.target.value;
+                            setShow(!show);
+                            handleMedicineChange(i, "dose", inputValue);
+                          }}
+                        >
+                          10
+                        </li>
+                      </ul>
+                    </span>
+                  )}
                 </div>
                 {/* <div className="flex flex-col">
                   <label htmlFor={`time_${i}`}>Time</label>
@@ -781,29 +915,80 @@ export default function InvoicePage() {
                       handleMedicineChange(i, "time", e.target.value)
                     }
                   />
+                  
                 </div> */}
+
+                <div className="flex flex-col">
+                  <label htmlFor={`dose_unit${i}`} className="w-20">
+                    Dose Unit
+                  </label>
+                  <select
+                    name={`dose_unit${i}`}
+                    className="border-2 border-gray-400 w-12 ml-2 mr-2"
+                    value={data.dose_unit}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "dose_unit", e.target.value)
+                    }
+                  >
+                    <option value="">Dose unit</option>
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                    <option value="mg">mg</option>
+                    <option value="ml">ml</option>
+                  </select>
+                </div>
+
                 <div className="flex flex-col">
                   <label htmlFor={`duration_${i}`}>Duration</label>
                   <select
                     name={`duration_${i}`}
-                    className="border-2 border-gray-400 w-20 ml-2 mr-2"
+                    className="border-2 border-gray-400 w-16 ml-2 mr-2"
                     value={data.duration}
                     onChange={(e) =>
                       handleMedicineChange(i, "duration", e.target.value)
                     }
                   >
                     <option value="">Select Duration</option>
-                    <option value="1 Day">1 Day</option>
-                    <option value="5 Day">5 Day</option>
-                    <option value="1 Week">1 Week</option>
-                    <option value="2 Week">2 Week</option>
-                    <option value="1 Month">1 Month</option>
+                    <option value="1">1 </option>
+                    <option value="2">2 </option>
+                    <option value="3">3 </option>
+                    <option value="4">4 </option>
+                    <option value="5">5 </option>
+                    <option value="6">6 </option>
+                    <option value="7">7 </option>
+                    <option value="8">8 </option>
+                    <option value="9">9 </option>
+                    <option value="10">10 </option>
+                    <option value="11">11 </option>
+                    <option value="12">12 </option>
                     <option value="Continue">Continue</option>
                     {/* Add more options as needed */}
                   </select>
                 </div>
+
                 <div className="flex flex-col">
-                  <label htmlFor={`dose_code${i}`}>Dose Code</label>
+                  <label htmlFor={`duration_unit${i}`} className="w-20">
+                    D-Unit
+                  </label>
+                  <select
+                    name={`duration_unit${i}`}
+                    className="border-2 border-gray-400 w-16 ml-2 mr-2"
+                    value={data.duration_unit}
+                    onChange={(e) =>
+                      handleMedicineChange(i, "duration_unit", e.target.value)
+                    }
+                  >
+                    <option value="">Select Duration</option>
+
+                    <option value="Day">Day</option>
+                    <option value="Week">Week</option>
+                    <option value="Month">Month</option>
+                    <option value="Year">Year</option>
+                    <option value="One-Time">One-Time</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor={`dose_code${i}`}>Frequency</label>
                   <select
                     name={`dose_code${i}`}
                     className="border-2 border-gray-400 w-20 ml-2 mr-2"
@@ -817,9 +1002,17 @@ export default function InvoicePage() {
                     <option value="1-1-0">1-1-0</option>
                     <option value="1-0-1">1-0-1</option>
                     <option value="1-0-0">1-0-0</option>
-                    <option value="0-1-1 ">0-1-1 </option>
-                    <option value="0-1-0  ">0-1-0 </option>
-                    <option value="0-0-1 ">0-0-1 </option>
+                    <option value="0-1-1">0-1-1 </option>
+                    <option value="0-1-0">0-1-0 </option>
+                    <option value="0-0-1">0-0-1 </option>
+                    <option value="4-T">4-T </option>
+                    <option value="Q-1-H">Q-1-H</option>
+                    <option value="Q-2-H">Q-2-H</option>
+                    <option value="Q-3-H">Q-3-H</option>
+                    <option value="Q-4-H">Q-4-H</option>
+                    <option value="Q-6-H">Q-6-H</option>
+                    <option value="Q-6-H">Q-8-H</option>
+                    <option value="Q-6-H">Q-12-H</option>
                     <option value="SOS">SOS</option>
                   </select>
                 </div>
@@ -836,16 +1029,16 @@ export default function InvoicePage() {
                     <option value="">Select Timing</option>
                     <option value="After Meal">After Meal</option>
                     <option value="Before Meal">Before Meal</option>
-                    <option value="Empty stomach">Empty stomach</option>
+                    <option value="Fasting">Fasting</option>
                     {/* Add more options as needed */}
                   </select>
                 </div>
                 <div className="flex flex-col">
-                  <label htmlFor={`advice${i}`}>Advice</label>
+                  <label htmlFor={`advice${i}`}>Instructions</label>
                   <input
                     type="text"
                     name={`advice_${i}`}
-                    className="border-2 border-gray-400 w-32 ml-2"
+                    className="border-2 border-gray-400 w-20 ml-2"
                     value={data.advice}
                     onChange={(e) =>
                       handleMedicineChange(i, "advice", e.target.value)

@@ -10,6 +10,8 @@ interface MedicineDataItem {
   duration: string;
   advice: string;
   dose_code: string;
+  duration_unit: string;
+  dose_unit: string;
 }
 
 export function MedicineData({ medicineData }: Data) {
@@ -23,29 +25,36 @@ export function MedicineData({ medicineData }: Data) {
           <li className="min-w-[170px] ">Medicine name</li>
           <li>Dose</li>
           <li>Timing</li>
-          <li>Advice</li>
+          <li>Instructions</li>
         </ul>
         {medicineData ? (
           medicineData.map((data, i) => (
-            <div key={i} className="flex justify-between pb-2 ">
-              <p className="text-sm min-w-[210px] max-w-[210px]  ">
+            <div
+              key={i}
+              className="flex justify-evenly pb-2 border-b-2 border-gray-300 "
+            >
+              <p className="text-sm min-w-[170px] font-semibold max-w-[170px]  ">
                 {data.medicine_name}
               </p>
-              <p className="text-sm min-w-[125px] max-w-[125px] ">
-                {data.dose}{" "}
-                <span className="min-w-14 max-w-14 inline-block">
+              <p className="text-sm min-w-[180px] max-w-[180px]  ">
+                <span className="min-w-[26px] max-w-[26px] inline-block ">
+                  {data.dose}
+                  {data.dose_unit}
+                </span>
+
+                <span className="min-w-20 ml-4  max-w-20 inline-block">
                   {data.medicine_type}
                 </span>
                 {data.medicine_type.length > 1 && (
                   <span className="ml-1 mr-1">|</span>
                 )}
-                {data.dose_code}
+                <span className="min-w-12  max-w-12 ">{data.dose_code}</span>
               </p>
 
-              {/* <p>{data.time}</p> */}
-              <p className="text-sm min-w-[155px] max-w-[155px]">
+              <p className="text-sm min-w-[155px] max-w-[155px] ">
                 {data.time} {data.time.length > 1 && <span> - </span>}{" "}
                 {data.duration}
+                <span className="ml-1">{data.duration_unit}</span>
               </p>
               <p className="min-w-[105px] text-sm max-w-[105px]">
                 {data.advice}
