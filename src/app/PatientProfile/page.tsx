@@ -110,8 +110,11 @@ export default function PatientProfile({
           }
         );
 
-        if (response.data.data) {
+        if (response.data.apiSuccess === 1) {
           setBillPrescription(response.data.data);
+        }
+        if (response.data.apiSuccess === 0) {
+          return null;
         }
       } catch (error) {
         console.error("Error fetching bills:", error);
@@ -130,6 +133,8 @@ export default function PatientProfile({
       }
       // Handle Axios errors
       else if (error.response) {
+        console.log(error);
+
         setMessage("An error occurred while fetching data.");
         setShowModal(true);
       }

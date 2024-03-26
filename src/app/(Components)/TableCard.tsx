@@ -113,24 +113,25 @@ export function TableCard({ prescriptions, bill }: TableCardProps) {
                         </div>
 
                         <div>
-                          {bill
-                            .filter(
-                              (billItem) =>
-                                billItem.prescription_id ===
-                                data.prescription_id
-                            )
-                            .map((d: any, i: any) => (
-                              <Link
-                                href={{
-                                  pathname: `/Bill/${d.prescription_id}`,
-                                }}
-                                key={i}
-                              >
-                                <td onClick={() => setIsLoading(true)}>
-                                  <FaFileInvoice className="size-10" />
-                                </td>
-                              </Link>
-                            ))}
+                          {bill &&
+                            bill
+                              .filter(
+                                (billItem) =>
+                                  billItem.prescription_id ===
+                                  data.prescription_id
+                              )
+                              .map((d: any, i: any) => (
+                                <Link
+                                  href={{
+                                    pathname: `/Bill/${d.prescription_id}`,
+                                  }}
+                                  key={i}
+                                >
+                                  <td onClick={() => setIsLoading(true)}>
+                                    <FaFileInvoice className="size-10" />
+                                  </td>
+                                </Link>
+                              ))}
                         </div>
                       </div>
                     </>

@@ -24,7 +24,7 @@ export function MedicineData({ medicineData }: Data) {
         <ul className="flex justify-between p-2 font-semibold">
           <li className="min-w-[170px] ">Medicine name</li>
           <li>Dose</li>
-          <li>Timing</li>
+          <li>Frequency</li>
           <li>Instructions</li>
         </ul>
         {medicineData ? (

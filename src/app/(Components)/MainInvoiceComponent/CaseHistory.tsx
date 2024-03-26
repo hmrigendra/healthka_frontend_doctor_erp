@@ -14,15 +14,11 @@ export function CaseHistory({ case_history, vitals }: CaseHistoryProps) {
         <p>Case History</p>
       </div>
       <div className="p-1">
-        <h3 className=" border-black font-semibold text-sm p-2">
-          Chief Complain
-        </h3>
+        <h3 className=" border-black font-semibold text-sm p-2">Complaint</h3>
         <p>{case_history}</p>
       </div>
       <div className="p-1 ">
-        <h3 className=" border-black font-semibold text-sm p-2">
-          Systemic history
-        </h3>
+        <h3 className=" border-black font-semibold text-sm p-2">Vitals</h3>
         <div className="pl-4 flex flex-wrap">
           {vitals.map((data, i) => (
             <div key={i}>

@@ -19,9 +19,8 @@ import ReactToPrint from "react-to-print";
 import { useRouter } from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import Backdrop from "@mui/material/Backdrop/Backdrop";
-import { data } from "../../../public/practiceData";
-import { Modal } from "../(Components)/Modal";
 
+import { Modal } from "../(Components)/Modal";
 import { Span } from "next/dist/trace";
 
 export default function InvoicePage() {
@@ -33,6 +32,10 @@ export default function InvoicePage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState(false);
+
+  // symptoms prediction
+
+  const [symptom, setSymptom] = useState("");
 
   const outPut = () => {
     const currentDate = new Date();
@@ -425,6 +428,89 @@ export default function InvoicePage() {
     });
   }, []);
 
+  useEffect(() => {
+    if (symptom.length > 2) {
+      // Find the index of the last space character
+      const lastSpaceIndex = symptom.lastIndexOf(" ");
+
+      // Extract the substring after the last space character
+      const symptomWithoutPrefix =
+        lastSpaceIndex !== -1 ? symptom.substring(lastSpaceIndex + 1) : symptom;
+
+      const fetchData = async () => {
+        try {
+          console.log(symptomWithoutPrefix);
+
+          const response = await axios.post(
+            "http://localhost:8000/api/v1/prediction/Symptoms",
+            {
+              complaint: symptomWithoutPrefix,
+            }
+          );
+
+          if (response.data.apiSuccess === 0) {
+            setSymptom("");
+          }
+          if (response.data.apiSuccess === 1) {
+            setSymptom(response.data.data[0].Symptom);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    } else {
+      setSymptom("");
+    }
+  }, [case_history]);
+
+  const handleChangePrediction = (e: any) => {
+    setSymptom(e.target.value);
+  };
+
+  const handleKeyDown = (e: any) => {
+    if (e.key === " ") {
+      setSymptom("");
+    }
+    if (e.key === "Tab" && symptom) {
+      e.preventDefault();
+      if (case_history.length < 6) {
+        setComplains(symptom);
+        setSymptom("");
+      } else {
+        const lastIndex = case_history.lastIndexOf(" ");
+
+        // Extract the substring before the last space
+        const prefix = case_history.slice(0, lastIndex + 1); // Adding 1 to include the space
+
+        if (
+          symptom === "Months" ||
+          symptom === "Weeks" ||
+          symptom === "Days" ||
+          symptom === "Years" ||
+          symptom === "Hours"
+        ) {
+          const newCaseHistory = prefix + (case_history ? "" : "") + symptom;
+          setComplains(newCaseHistory);
+          setSymptom("");
+        } else {
+          const newCaseHistory = prefix + (case_history ? ", " : "") + symptom;
+          setComplains(newCaseHistory);
+          setSymptom("");
+        }
+
+        // Update case_history and reset symptom
+      }
+    }
+  };
+
+  // for the case_history  prediction
+  const textareaWidth =
+    case_history.length < 11
+      ? case_history.length * 12
+      : case_history.length * 9;
+
   return (
     <main className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
       <Modal visible={showModal} onClose={handleOnclose} response={message} />
@@ -630,28 +716,62 @@ export default function InvoicePage() {
           </div>
           <div className="flex flex-col">
             <label htmlFor="chief_complains">Complaints</label>
-            <textarea
-              name="message"
-              id="message"
-              className="border-2 border-gray-400 resize-y w-full min-h-24  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-              value={case_history}
-              onChange={(e) => setComplains(e.target.value)}
-            ></textarea>
+            <div className="relative">
+              <textarea
+                name="message"
+                id="message"
+                spellCheck="false"
+                className="border-2 border-gray-400 resize-y w-full min-h-24  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                value={case_history}
+                onKeyDown={handleKeyDown}
+                onChange={(e: any) => {
+                  handleChangePrediction(e);
+                  setComplains(e.target.value);
+                }}
+              />
+              <span
+                className="absolute z-[2]  text-gray-700"
+                style={{ left: `${textareaWidth}px` }}
+              >
+                {symptom}
+              </span>
+            </div>
+
             <p>Clinical Notes</p>
 
             <div>
               {vitals.map((vital, index) => (
                 <div key={index} className="flex mb-2">
                   <label htmlFor={`vitals_name_${index}`}>Vitals name</label>
-                  <input
-                    type="text"
+                  <select
+                    id={`vitals_name_${index}`}
                     name={`vites_name${index}`}
                     value={vital.vites_name}
                     onChange={(e) =>
                       handleVitalsChange(index, "vites_name", e.target.value)
                     }
-                    className="border-2 border-gray-400 w-36 ml-2 mr-2"
-                  />
+                    className="border-2 border-gray-400 ml-2 mr-2"
+                  >
+                    <option value="">Select</option>
+                    <option value="Blood Pressure">Blood Pressure</option>
+                    <option value="Heart Rate">Heart Rate</option>
+                    <option value="Respiratory Rate">Respiratory Rate</option>
+                    <option value="Pulse Pressure">Pulse Pressure</option>
+                    <option value="Oxygen Saturation">Oxygen Saturation</option>
+                    <option value="Pulse Rhythm">Pulse Rhythm</option>
+                    <option value="SpO2">SpO2</option>
+                    <option value="Blood Glucose Levels">
+                      Blood Glucose Levels
+                    </option>
+                    <option value="Height">Height</option>
+                    <option value="Weight">Weight</option>
+                    <option value="GCS">GCS</option>
+                    <option value="Temperature">Temperature</option>
+
+                    <option value="Capnography">Capnography</option>
+                    <option value="Skin Color">Skin Color</option>
+                  </select>
+
                   <label htmlFor={`result_${index}`}>Result</label>
                   <input
                     type="text"
@@ -984,7 +1104,7 @@ export default function InvoicePage() {
                     <option value="Week">Week</option>
                     <option value="Month">Month</option>
                     <option value="Year">Year</option>
-                    <option value="One-Time">One-Time</option>
+                    <option value="STAT">STAT</option>
                   </select>
                 </div>
                 <div className="flex flex-col">
@@ -1061,7 +1181,7 @@ export default function InvoicePage() {
             ))}
           </div>
           <div>
-            <label htmlFor="chief_complains">General Advice</label>
+            <label htmlFor="general_advice">General Advice</label>
             <textarea
               name="message"
               id="message"
@@ -1100,7 +1220,7 @@ export default function InvoicePage() {
             />
           </div>
           <div>
-            <label htmlFor="chief_complains">Surgery Advice</label>
+            <label htmlFor="surgery_advice">Surgery Advice</label>
             <textarea
               name="message"
               value={surgery_advice}
