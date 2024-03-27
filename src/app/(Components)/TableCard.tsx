@@ -69,10 +69,16 @@ export function TableCard({ prescriptions, bill }: TableCardProps) {
             <table className="w-full bg-indigo-300 rounded-md">
               <tbody>
                 <tr className="flex gap-12">
-                  <td className="flex min-w-[100px] max-w-[100px] justify-center  items-center m-3 truncate   text-sm">
-                    {data.prescription_id}
-                  </td>
-
+                  <Link
+                    href={{
+                      pathname: `/InvoiceAgain/${data.prescription_id}`,
+                      query: { followUp: "Yes" },
+                    }}
+                  >
+                    <td className="flex min-w-[100px] max-w-[100px] justify-center items-center m-3 truncate text-sm">
+                      {data.prescription_id}
+                    </td>
+                  </Link>
                   <p className="border-2 border-black"></p>
                   <td className="flex justify-center min-w-[150px] items-center  text-sm">
                     {formatDate(data.createdAt.toString())}
@@ -81,12 +87,10 @@ export function TableCard({ prescriptions, bill }: TableCardProps) {
                   <td className="flex justify-center min-w-[150px] max-w-[200px] overflow-hidden  text-sm">
                     {data.case_history}
                   </td>
-
                   <p className="border-2 border-black"></p>
                   <td className="flex justify-center min-w-[100px] items-center  text-sm">
                     {data.FollowUpDate ?? "no follow-up"}
                   </td>
-
                   <p className="border-2 border-black"></p>
                   {isLoading ? (
                     <Backdrop

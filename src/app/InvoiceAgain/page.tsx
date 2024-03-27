@@ -2,7 +2,7 @@
 import { CustomerData } from "../(Components)/MainInvoiceComponent/CustomerData";
 import { CaseHistory } from "../(Components)/MainInvoiceComponent/CaseHistory";
 import { Header } from "../(Components)/MainInvoiceComponent/Header";
-import { Diagnosis } from "../(Components)/MainInvoiceComponent/Diagnosis";
+
 import { MedicineData } from "../(Components)/MainInvoiceComponent/MedicineData";
 import { GeneralAdvice } from "../(Components)/MainInvoiceComponent/GeneralAdvice";
 import { Referral } from "../(Components)/MainInvoiceComponent/Referral";
@@ -10,7 +10,7 @@ import { NextVisit } from "../(Components)/MainInvoiceComponent/NextVisit";
 import { SurgeryAdvice } from "../(Components)/MainInvoiceComponent/SurgeryAdvice";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-
+import { Diagnosis } from "../(Components)/MainInvoiceComponent/Diagnosis";
 import { FaMinusCircle } from "react-icons/fa";
 
 import { FaPlusCircle } from "react-icons/fa";
@@ -36,6 +36,7 @@ export default function InvoicePage() {
   // symptoms prediction
 
   const [symptom, setSymptom] = useState("");
+  const [diagnosisPredict, setDiagnosisPredict] = useState("");
 
   const outPut = () => {
     const currentDate = new Date();
@@ -429,6 +430,40 @@ export default function InvoicePage() {
   }, []);
 
   useEffect(() => {
+    if (diagnosisPredict.length > 2) {
+      const lastSpaceIndex = diagnosisPredict.lastIndexOf(" ");
+      const DiagnosisWithOutPrefix =
+        lastSpaceIndex !== -1
+          ? diagnosisPredict.substring(lastSpaceIndex + 1)
+          : diagnosisPredict;
+
+      const fetchData = async () => {
+        try {
+          console.log(DiagnosisWithOutPrefix);
+
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/prediction/Diagnosis`,
+            {
+              disease: DiagnosisWithOutPrefix,
+            }
+          );
+
+          if (response.data.apiSuccess === 0) {
+            setDiagnosisPredict("");
+          }
+          if (response.data.apiSuccess === 1) {
+            setDiagnosisPredict(response.data.data[0].disease);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [diagnosis_history]);
+
+  useEffect(() => {
     if (symptom.length > 2) {
       // Find the index of the last space character
       const lastSpaceIndex = symptom.lastIndexOf(" ");
@@ -442,7 +477,7 @@ export default function InvoicePage() {
           console.log(symptomWithoutPrefix);
 
           const response = await axios.post(
-            "http://localhost:8000/api/v1/prediction/Symptoms",
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/prediction/Symptoms`,
             {
               complaint: symptomWithoutPrefix,
             }
@@ -505,11 +540,40 @@ export default function InvoicePage() {
     }
   };
 
+  const handleKeyDownDiagnosis = (e: any) => {
+    if (e.key === " ") {
+      setDiagnosisPredict("");
+    }
+    if (e.key === "Tab" && diagnosisPredict) {
+      e.preventDefault();
+      if (diagnosis_history.length < 6) {
+        setDiagnosis(diagnosisPredict);
+        setDiagnosisPredict("");
+      } else {
+        const lastIndex = diagnosis_history.lastIndexOf(" ");
+
+        // Extract the substring before the last space
+        const prefix = diagnosis_history.slice(0, lastIndex + 1); // Adding 1 to include the space
+
+        const newCaseHistory =
+          prefix + (diagnosis_history ? ", " : "") + diagnosisPredict;
+        setDiagnosis(newCaseHistory);
+        setDiagnosisPredict("");
+
+        // Update case_history and reset symptom
+      }
+    }
+  };
+
   // for the case_history  prediction
   const textareaWidth =
     case_history.length < 11
       ? case_history.length * 12
       : case_history.length * 9;
+  const DiagnosisWidth =
+    diagnosis_history.length < 11
+      ? diagnosis_history.length * 12
+      : diagnosis_history.length * 9;
 
   return (
     <main className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
@@ -798,13 +862,25 @@ export default function InvoicePage() {
           </div>
           <div>
             <label htmlFor="Diagnosis">Diagnosis</label>
-            <textarea
-              name="message"
-              id="message"
-              value={diagnosis_history}
-              className="border-2 border-gray-400 resize-y w-full min-h-16  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-              onChange={(e) => setDiagnosis(e.target.value)}
-            ></textarea>
+            <div className="relative">
+              <textarea
+                name="message"
+                id="message"
+                value={diagnosis_history}
+                onKeyDown={handleKeyDownDiagnosis}
+                className="border-2 border-gray-400 resize-y w-full min-h-16  focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                onChange={(e) => {
+                  setDiagnosisPredict(e.target.value);
+                  setDiagnosis(e.target.value);
+                }}
+              />
+              <span
+                className="absolute z-[2]  text-gray-700"
+                style={{ left: `${DiagnosisWidth}px` }}
+              >
+                {diagnosisPredict}
+              </span>
+            </div>
           </div>
           <div>
             <p>Test </p>
