@@ -52,6 +52,56 @@ export default function Bill() {
   };
   const componentRef = useRef(null);
 
+  const [servicePrediction, setServicePrediction] = useState(
+    Array(service.length).fill("")
+  );
+  const getServices = async () => {
+    try {
+      for (let i = 0; i < service.length; i++) {
+        const serviceData = service[i].service_name;
+        if (typeof serviceData === "string" && serviceData.trim() !== "") {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/prediction/service_name_prediction`,
+            {
+              service_name: serviceData,
+            },
+            {
+              withCredentials: true,
+            }
+          );
+
+          const predictions = response.data.data.map(
+            (data: any) => data.service_name
+          );
+
+          console.log("This is prediction", predictions);
+
+          setServicePrediction((predict) => {
+            const updatedPrediction = [...predict];
+            updatedPrediction[i] = predictions;
+            return updatedPrediction;
+          });
+        } else {
+          setServicePrediction((predict) => {
+            const updatedPrediction = [...predict];
+            updatedPrediction[i] = "";
+            return updatedPrediction;
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const noRepeat = useRef(true);
+  useEffect(() => {
+    if (noRepeat) {
+      getServices();
+    }
+    noRepeat.current = false;
+  }, [service]);
+
   //Post Api Call
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
@@ -63,7 +113,7 @@ export default function Bill() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "http://localhost:8000/api/v1/records/create_bill",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/records/create_bill`,
         {
           services: service,
           bill_time: TimeOutPut(),
@@ -90,6 +140,20 @@ export default function Bill() {
       setMessage(error.message);
       setShowModal(true);
       setIsLoading(false);
+    }
+  };
+
+  const onSelect = (index: number, predictionIndex: number, field: string) => {
+    const PredictionData = servicePrediction[index][predictionIndex];
+    const final = PredictionData + " ";
+    if (PredictionData) {
+      handleTestChange(index, "service_name", final);
+
+      setServicePrediction((prediction) => {
+        const updatedPrediction = [...prediction];
+        updatedPrediction[index].slice(prediction, 1);
+        return updatedPrediction;
+      });
     }
   };
 
@@ -242,7 +306,7 @@ export default function Bill() {
               </div>
               <div className="border-y-2 border-black"></div>
               {service.map((data, i) => (
-                <div key={i} className="flex justify-between p-10">
+                <div key={i} className="flex justify-between pl-10 pr-10 p-2">
                   <p className="font-semibold text-xl">{data.service_name}</p>
                   <p className="text-xl">Rs: {data.service_charge}</p>
                 </div>
@@ -296,6 +360,20 @@ export default function Bill() {
                     handleTestChange(i, "service_name", e.target.value)
                   }
                 />
+                <div>
+                  <ul>
+                    {servicePrediction[i] &&
+                      servicePrediction[i].map((data: any, j: any) => (
+                        <li
+                          onClick={() => onSelect(i, j, "service_name")}
+                          className="bg-slate-100 shadow-lg rounded-md hover:bg-blue-700 hover:font-bold hover:text-white"
+                          key={j}
+                        >
+                          {data}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
               </div>
 
               <div>
