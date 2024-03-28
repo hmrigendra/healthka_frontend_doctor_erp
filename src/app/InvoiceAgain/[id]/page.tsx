@@ -4,7 +4,7 @@ import { FaMinusCircle } from "react-icons/fa";
 import { FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
 import ReactToPrint from "react-to-print";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/app/(Components)/MainInvoiceComponent/Header";
 import { CustomerData } from "@/app/(Components)/MainInvoiceComponent/CustomerData";
 import { CaseHistory } from "@/app/(Components)/MainInvoiceComponent/CaseHistory";
@@ -20,7 +20,8 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { IoIosArrowDown } from "react-icons/io";
 import { Modal } from "@/app/(Components)/Modal";
 
-export default function InvoicePage({ params, followUp }: any) {
+export default function InvoicePage({ params }: any) {
+  const data = useSearchParams();
   //for the model
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
@@ -314,6 +315,8 @@ export default function InvoicePage({ params, followUp }: any) {
   }, [getData]);
 
   const [symptom, setSymptom] = useState("");
+
+  const followUp = data.get("followUp");
   useEffect(() => {
     if (symptom.length > 2) {
       // Find the index of the last space character
@@ -611,7 +614,7 @@ export default function InvoicePage({ params, followUp }: any) {
         </div>
       )}
 
-      {followUp === "YES" && active === true && (
+      {followUp === "Yes" && active === true ? (
         <div className="flex flex-row justify-between">
           <div className=" ">
             <button
@@ -640,6 +643,33 @@ export default function InvoicePage({ params, followUp }: any) {
               </button>
             )}
           </div>
+        </div>
+      ) : (
+        <div className="flex flex-row justify-between">
+          {followUp === "Yes" ? (
+            ""
+          ) : (
+            <div className="">
+              {isLoading ? (
+                <Backdrop
+                  sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                  }}
+                  open={isLoading}
+                >
+                  <CircularProgress color="inherit" />
+                </Backdrop>
+              ) : (
+                <button
+                  onClick={SendCustomerData}
+                  className="p-2 pl-6 pr-6 bg-green-500 text-white font-semibold"
+                >
+                  Bill
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
       {active === false && (
