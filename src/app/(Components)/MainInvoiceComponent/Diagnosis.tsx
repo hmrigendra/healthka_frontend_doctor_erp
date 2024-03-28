@@ -13,7 +13,7 @@ export function Diagnosis({ diagnosis_history, test }: data) {
       <div className="border-b-4 border-black">
         <p className="text-lg font-bold  mt-2">Diagnosis</p>
       </div>
-      <div className="">
+      <div className="p-1">
         <p>{diagnosis_history}</p>
       </div>
       <div>
@@ -22,7 +22,7 @@ export function Diagnosis({ diagnosis_history, test }: data) {
         </div>
         <div>
           {test.map((data, i) => (
-            <div key={i} className="flex justify-around p-2">
+            <div key={i} className="flex justify-between pb-1 pl-3 ">
               <p>{data.test_name}</p>
               <p>{data.advice}</p>
             </div>

@@ -280,6 +280,10 @@ export default function InvoicePage() {
     },
   ]);
 
+  const [testPredictions, setTestPredictions] = useState(
+    Array(test.length).fill("")
+  );
+
   const addNewTest = () => {
     setTest([...test, { test_name: "", advice: "" }]);
   };
@@ -293,6 +297,22 @@ export default function InvoicePage() {
   };
 
   const componentRef = useRef(null);
+  const onSelect = (index: number, predictionIndex: number, field: string) => {
+    const selectedPrediction = testPredictions[index][predictionIndex];
+    const final = selectedPrediction + " ";
+    if (selectedPrediction) {
+      handleTestChange(index, field, final);
+      noRepeat.current = false;
+      setTestPredictions((prevTestPredictions) => {
+        const updatedTestPredictions = [...prevTestPredictions];
+        updatedTestPredictions[index].splice(predictionIndex, 1);
+        return updatedTestPredictions;
+      });
+      noRepeat.current = false;
+      console.log(testPredictions);
+      console.log("Whats up");
+    }
+  };
 
   const handlePatientData = (e: any) => {
     const name = e.target.name; // Use e.target.name to get the name of the input field
@@ -462,6 +482,49 @@ export default function InvoicePage() {
       fetchData();
     }
   }, [diagnosis_history]);
+
+  const testPrediction = async (t: boolean) => {
+    try {
+      if (t) {
+        for (let i = 0; i < test.length; i++) {
+          const testValue = test[i].test_name;
+          if (typeof testValue === "string" && testValue.trim() !== "") {
+            // Make an API call to fetch predictions for the test name
+            const response = await axios.post(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/prediction/Test`,
+              {
+                test: testValue,
+              }
+            );
+            console.log(response);
+
+            const predictions = response.data.data.map(
+              (item: any) => item.Test
+            );
+
+            setTestPredictions((prevTestPredictions) => {
+              const newTestPredictions = [...prevTestPredictions];
+              newTestPredictions[i] = predictions;
+              return newTestPredictions;
+            });
+          }
+        }
+      }
+      if (t === false) {
+        return setTestPredictions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching predictions:", error);
+    }
+  };
+
+  const noRepeat = useRef(true);
+  useEffect(() => {
+    if (noRepeat) {
+      testPrediction(true);
+    }
+    noRepeat.current = false;
+  }, [test]);
 
   useEffect(() => {
     if (symptom.length > 2) {
@@ -887,24 +950,42 @@ export default function InvoicePage() {
 
             {test.map((data, i) => (
               <div key={i} className="flex">
-                <label htmlFor="systematic_history">Test name</label>
-                <input
-                  type="text"
-                  name="test_name"
-                  className="border-2 border-gray-400 w-36 ml-2 mr-2"
-                  value={data.test_name}
-                  onChange={(e) =>
-                    handleTestChange(i, "test_name", e.target.value)
-                  }
-                />
-                <label htmlFor="systematic_history">Message</label>
+                <div>
+                  <label htmlFor={`test_name_${i}`}>Test name</label>
+                  <input
+                    type="text"
+                    name={`test_name_${i}`}
+                    className="border-2 border-gray-400 w-60 ml-2 mr-2"
+                    value={data.test_name}
+                    onChange={(e) =>
+                      handleTestChange(i, "test_name", e.target.value)
+                    }
+                  />
+
+                  <div>
+                    <ul>
+                      {testPredictions[i] &&
+                        testPredictions[i].map(
+                          (prediction: string, j: number) => (
+                            <li
+                              key={j}
+                              onClick={(e) => onSelect(i, j, "test_name")}
+                            >
+                              {prediction}
+                            </li>
+                          )
+                        )}
+                    </ul>
+                  </div>
+                </div>
+                <label htmlFor={`advice_${i}`}>Message</label>
                 <input
                   type="text"
                   name={`advice_${i}`}
-                  className="border-2 border-gray-400 w-36 ml-2 mr-2"
+                  className="border-2 border-gray-400 w-60 ml-2 mr-2"
                   value={data.advice}
-                  onChange={
-                    (e) => handleTestChange(i, "advice", e.target.value) // Changed "message" to "note"
+                  onChange={(e) =>
+                    handleTestChange(i, "advice", e.target.value)
                   }
                 />
 
@@ -918,6 +999,7 @@ export default function InvoicePage() {
               </div>
             ))}
           </div>
+
           <div>
             <p>Medicine </p>
             {medicineData.map((data, i) => (
