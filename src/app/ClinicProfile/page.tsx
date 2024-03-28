@@ -101,7 +101,7 @@ export default function ClinicProfile() {
     <>
       <Suspense>
         <Modal visible={showModal} onClose={handleOnclose} response={message} />
-        <div className="p-10 bg-red-50 min-h-screen">
+        <div className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
           {isLoading ? (
             <Backdrop
               sx={{
@@ -159,7 +159,7 @@ export default function ClinicProfile() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-between w-1/2">
+              <div className="flex justify-between w-[75%] p-6">
                 <div className="flex-col mr-10">
                   <p>opening time</p>
                   <input
@@ -198,7 +198,7 @@ export default function ClinicProfile() {
                 </div>
               </div>
 
-              <div className="flex w-2/3 justify-between">
+              <div className="flex w-full justify-between">
                 <div className="flex-col">
                   <p>GST</p>
                   <input
@@ -288,7 +288,7 @@ export default function ClinicProfile() {
                   />
                 </div>
                 <div className="flex w-full m-3">
-                  <div className="flex-col">
+                  <div className="flex">
                     <input
                       type="text"
                       className="w-1/2 p-2 m-2  bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"

@@ -17,7 +17,6 @@ import { Modal } from "../(Components)/Modal";
 export default function SignUp() {
   //model , circular_progress_indicator
 
-  const [errorResponse, setErrorResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const handleOnclose = () => setShowModal(false);
@@ -128,7 +127,7 @@ export default function SignUp() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="bg-red-100">
+    <div className=" md:max-w-xl md:mx-auto  xl:max-w-4xl xl:mx-auto m-5 p-5 rounded shadow-xl lg:max-w-xl lg:mx-auto bg-white">
       <Modal visible={showModal} onClose={handleOnclose} response={message} />
       {isLoading ? (
         <Backdrop
@@ -155,7 +154,7 @@ export default function SignUp() {
 
               {/* Flex */}
               <div className="flex ">
-                <div className="w-2/6 m-3 mr-6">
+                <div className="w-1/2 m-3 mr-6">
                   <p>First name</p>
                   <input
                     value={doctorProfile.first_name}
@@ -176,7 +175,7 @@ export default function SignUp() {
                     ""
                   )}
                 </div>
-                <div className="w-2/6 m-3">
+                <div className="w-1/2 m-3">
                   <p>Last name</p>
                   <input
                     type="text"
@@ -223,35 +222,6 @@ export default function SignUp() {
                     )}
                   </div>
                   {/* Add calender over here  */}
-                  <div className="flex-col">
-                    <label htmlFor="gender">Gender:</label>
-                    <div>
-                      <select
-                        id="gender"
-                        name="gender"
-                        value={doctorProfile.gender}
-                        onChange={(e) =>
-                          setDoctorProfile({
-                            ...doctorProfile,
-                            gender: e.target.value,
-                          })
-                        }
-                      >
-                        {" "}
-                        <option value="select">Select</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                      {doctorProfile.gender.length === 0 && errors ? (
-                        <p className="text-sm text-blue-700">
-                          Gender can't be empty
-                        </p>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  </div>
                 </div>
                 <div>
                   <p>Mobile number</p>
@@ -292,6 +262,35 @@ export default function SignUp() {
                     className="w-full p-2 bg-red-200 rounded-lg "
                   />
                 </div>
+                <div className="flex">
+                  <label htmlFor="gender">Gender:</label>
+                  <div>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={doctorProfile.gender}
+                      onChange={(e) =>
+                        setDoctorProfile({
+                          ...doctorProfile,
+                          gender: e.target.value,
+                        })
+                      }
+                    >
+                      {" "}
+                      <option value="select">Select</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                    {doctorProfile.gender.length === 0 && errors ? (
+                      <p className="text-sm text-blue-700">
+                        Gender can't be empty
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             <div>
@@ -308,12 +307,12 @@ export default function SignUp() {
                     })
                   }
                   type="text"
-                  className="w-2/6 mr-10 p-2  bg-red-200 rounded-lg placeholder:text-gray-500"
+                  className="w-1/2 mr-10 p-2  bg-red-200 rounded-lg placeholder:text-gray-500"
                   placeholder="House No./Room No./Apartment Name"
                 />
                 <input
                   type="text"
-                  className="w-2/6 p-2  bg-red-200 rounded-lg placeholder:text-gray-500"
+                  className="w-1/2 p-2  bg-red-200 rounded-lg placeholder:text-gray-500"
                   placeholder="Locality/Lane/colony/Road"
                   value={doctorAddress.lane}
                   onChange={(e) =>
@@ -324,7 +323,7 @@ export default function SignUp() {
               <div className="flex w-full m-3">
                 <input
                   type="text"
-                  className="w-2/6 p-2  bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
+                  className="w-1/2 p-2  bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
                   placeholder="Address one"
                   value={doctorAddress.address_one}
                   onChange={(e) =>
@@ -336,7 +335,7 @@ export default function SignUp() {
                 />
                 <input
                   type="text"
-                  className="w-2/6 p-2  bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
+                  className="w-1/2 p-2  bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
                   placeholder="Landmark"
                   value={doctorAddress.landmark}
                   onChange={(e) =>
@@ -348,7 +347,7 @@ export default function SignUp() {
                 />
               </div>
               <div className="flex w-full m-3">
-                <div className="flex-col">
+                <div className="flex">
                   <input
                     type="text"
                     className="w-1/2 p-2 m-2  bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
@@ -398,7 +397,7 @@ export default function SignUp() {
               <div className="flex m-3">
                 <input
                   type="text"
-                  className="w-2/6 p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
+                  className="w-1/2 p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
                   name=""
                   id=""
                   placeholder="Degree"
@@ -417,7 +416,7 @@ export default function SignUp() {
                 )}
                 <input
                   type="text"
-                  className="w-2/6 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500 p-2"
+                  className="w-1/2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500 p-2"
                   placeholder="College name"
                   value={qualification.College_name}
                   onChange={(e) =>
@@ -436,7 +435,7 @@ export default function SignUp() {
               <div className="flex m-3">
                 <input
                   type="text"
-                  className="w-2/6 p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
+                  className="w-1/2 p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
                   placeholder="Specialization"
                   value={qualification.specialization}
                   onChange={(e) =>
@@ -456,7 +455,7 @@ export default function SignUp() {
                 </span>
                 <input
                   type="date"
-                  className="w-[15%] p-2  border-2 mr-3 bg-red-200 rounded-lg  placeholder:text-gray-500"
+                  className="w-1/3 p-2  border-2 mr-3 bg-red-200 rounded-lg  placeholder:text-gray-500"
                   name=""
                   id=""
                   placeholder="Year of pass"
@@ -473,10 +472,11 @@ export default function SignUp() {
                 ) : (
                   ""
                 )}
-
+              </div>
+              <div>
                 <input
                   type="text"
-                  className="w-[16%] p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
+                  className="w-1/3 p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
                   placeholder="Years of experience"
                   value={qualification.experience}
                   onChange={(e) =>
