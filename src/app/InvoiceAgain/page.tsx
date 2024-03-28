@@ -610,8 +610,6 @@ export default function InvoicePage() {
             }
           );
 
-          console.log(response.data.data);
-
           const predictions = response.data.data.map(
             (data: any) => data.Medicine
           );
@@ -855,7 +853,7 @@ export default function InvoicePage() {
         <div>
           <div id="customer" className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <label htmlFor="patient_name" className="mb-1">
+              <label htmlFor="patient_name" className="mb-1 font-semibold pb-1">
                 Patient Name
               </label>
               <input
@@ -872,7 +870,7 @@ export default function InvoicePage() {
               )}
             </div>
             <div className="flex flex-col">
-              <label htmlFor="phone_number" className="mb-1">
+              <label htmlFor="phone_number" className="mb-1 font-semibold pb-1">
                 Phone number
               </label>
               <input
@@ -918,7 +916,10 @@ export default function InvoicePage() {
               )}
             </div>
             <div className="flex">
-              <label htmlFor="patient_gender" className="mb-1">
+              <label
+                htmlFor="patient_gender"
+                className="mb-1 font-semibold pb-1"
+              >
                 Patient Gender
               </label>
               <select
@@ -942,7 +943,10 @@ export default function InvoicePage() {
             </div>
 
             <div className="flex ">
-              <label htmlFor="patient_gender" className="mb-1">
+              <label
+                htmlFor="patient_gender"
+                className="mb-1 font-semibold pb-1"
+              >
                 Patient Age
               </label>
               <input
@@ -965,7 +969,9 @@ export default function InvoicePage() {
             </div>
           </div>
           <div className="flex flex-col">
-            <label htmlFor="chief_complains">Complaints</label>
+            <label htmlFor="chief_complains" className="font-semibold pb-1 ">
+              Complaints
+            </label>
             <div className="relative">
               <textarea
                 name="message"
@@ -987,7 +993,7 @@ export default function InvoicePage() {
               </span>
             </div>
 
-            <p>Clinical Notes</p>
+            <p className="font-semibold pb-1">Clinical Notes</p>
 
             <div>
               {vitals.map((vital, index) => (
@@ -1048,7 +1054,9 @@ export default function InvoicePage() {
             </div>
           </div>
           <div>
-            <label htmlFor="Diagnosis">Diagnosis</label>
+            <label htmlFor="Diagnosis" className="font-semibold pb-1">
+              Diagnosis
+            </label>
             <div className="relative">
               <textarea
                 name="message"
@@ -1070,7 +1078,7 @@ export default function InvoicePage() {
             </div>
           </div>
           <div>
-            <p>Test </p>
+            <p className="font-semibold pb-1">Test </p>
 
             {test.map((data, i) => (
               <div key={i} className="flex">
@@ -1127,7 +1135,7 @@ export default function InvoicePage() {
           </div>
 
           <div>
-            <p>Medicine </p>
+            <p className="font-semibold pb-1 mt-2">Medicine </p>
             {medicineData.map((data, i) => (
               <div key={i} className="flex  mb-3">
                 <div className="">
@@ -1483,7 +1491,9 @@ export default function InvoicePage() {
             ))}
           </div>
           <div>
-            <label htmlFor="general_advice">General Advice</label>
+            <label htmlFor="general_advice" className="font-semibold pb-1 ">
+              General Advice
+            </label>
             <textarea
               name="message"
               id="message"
@@ -1493,7 +1503,9 @@ export default function InvoicePage() {
             ></textarea>
           </div>
           <div>
-            <label htmlFor="referral">Referral</label>
+            <label htmlFor="referral" className="font-semibold pb-1 ">
+              Referral
+            </label>
             <input
               type="text"
               value={referral}
@@ -1503,7 +1515,9 @@ export default function InvoicePage() {
             />
           </div>
           <div className="mt-2">
-            <label htmlFor="follow_up">Follow up</label>
+            <label htmlFor="follow_up" className="font-semibold pb-1 ">
+              Follow up
+            </label>
             <input
               value={FollowUpDate}
               onChange={(e) => setFollowupDate(e.target.value)}
@@ -1511,7 +1525,9 @@ export default function InvoicePage() {
               className="border-2 border-black ml-2"
             />
 
-            <label htmlFor="follow_up_time">Follow up Time</label>
+            <label htmlFor="follow_up_time" className="font-semibold pb-1 ">
+              Follow up Time
+            </label>
             <input
               type="time"
               id="follow_up_time"
@@ -1522,7 +1538,12 @@ export default function InvoicePage() {
             />
           </div>
           <div>
-            <label htmlFor="surgery_advice">Surgery Advice</label>
+            <label
+              htmlFor="surgery_advice"
+              className="font-semibold pb-1 ml-10"
+            >
+              Surgery Advice
+            </label>
             <textarea
               name="message"
               value={surgery_advice}
