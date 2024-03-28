@@ -193,6 +193,34 @@ export default function InvoicePage() {
       },
     ]);
   };
+
+  const AddingAutomation = (e: KeyboardEvent, i: any) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      addVitals();
+    }
+    if (e.ctrlKey && e.key === "Delete") {
+      removeVitals(i);
+    }
+  };
+
+  const AddingAutomationMedicine = (e: KeyboardEvent, i: any) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      addMedicineData();
+    }
+    if (e.ctrlKey && e.key === "Delete") {
+      removeMedicine(i);
+    }
+  };
+
+  const AddingTestAutomation = (e: KeyboardEvent, i: any) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      addNewTest();
+    }
+    if (e.ctrlKey && e.key === "Delete") {
+      removeTest(i);
+    }
+  };
+
   const removeVitals = (indexToRemove: number) => {
     setVitals((params) => {
       return params.filter((_, index) => index !== indexToRemove);
@@ -284,6 +312,10 @@ export default function InvoicePage() {
     Array(test.length).fill("")
   );
 
+  const [medicinePrediction, setMedicinePrediction] = useState(
+    Array(medicineData.length).fill("")
+  );
+
   const addNewTest = () => {
     setTest([...test, { test_name: "", advice: "" }]);
   };
@@ -308,9 +340,26 @@ export default function InvoicePage() {
         updatedTestPredictions[index].splice(predictionIndex, 1);
         return updatedTestPredictions;
       });
-      noRepeat.current = false;
-      console.log(testPredictions);
-      console.log("Whats up");
+    }
+  };
+
+  const onSelectMedicine = (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    index: number,
+    predictionIndex: number,
+    field: string
+  ) => {
+    e.preventDefault(); // Prevent default link navigation behavior
+
+    const onSelectPrediction = medicinePrediction[index][predictionIndex];
+    const final = onSelectPrediction + " ";
+    if (onSelectPrediction) {
+      handleMedicineChange(index, field, final);
+      setMedicinePrediction((PreviousMedicinePrediction) => {
+        const updatedMedicine = [...PreviousMedicinePrediction];
+        updatedMedicine[index].splice(predictionIndex, 1);
+        return updatedMedicine;
+      });
     }
   };
 
@@ -327,6 +376,31 @@ export default function InvoicePage() {
       [name]: value,
     }));
   };
+
+  // Need to work on this function
+
+  // const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(
+  //   null
+  // );
+
+  // const handleKeyDownForTest = (
+  //   e: React.KeyboardEvent<HTMLUListElement>,
+  //   i: any
+  // ) => {
+  //   if (e.key === "ArrowDown") {
+  //     e.preventDefault(); // Prevent default scrolling behavior
+  //     setSelectedItemIndex((prevIndex) =>
+  //       prevIndex !== null
+  //         ? Math.min(prevIndex + 1, testPredictions[i].length - 1)
+  //         : 0
+  //     );
+  //   } else if (e.key === "ArrowUp") {
+  //     e.preventDefault(); // Prevent default scrolling behavior
+  //     setSelectedItemIndex((prevIndex) =>
+  //       prevIndex !== null ? Math.max(prevIndex - 1, 0) : 0
+  //     );
+  //   }
+  // };
 
   const [apiPatientData, setApiPatientData] = useState([
     {
@@ -388,7 +462,6 @@ export default function InvoicePage() {
       if (selectedData) {
         setPatientData(selectedData);
         if (shouldCallApi) {
-          // Call the prediction API only if shouldCallApi is true
           predictionApi();
         }
         setApiPatientData([]);
@@ -507,6 +580,12 @@ export default function InvoicePage() {
               newTestPredictions[i] = predictions;
               return newTestPredictions;
             });
+          } else {
+            setTestPredictions((prevTestPredictions) => {
+              const newTestPredictions = [...prevTestPredictions];
+              newTestPredictions[i] = "";
+              return newTestPredictions;
+            });
           }
         }
       }
@@ -517,6 +596,50 @@ export default function InvoicePage() {
       console.error("Error fetching predictions:", error);
     }
   };
+
+  const MedicineDataPrediction = async () => {
+    try {
+      for (let i = 0; i < medicineData.length; i++) {
+        const meds = medicineData[i].medicine_name;
+
+        if (typeof meds === "string" && meds.trim() !== "") {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/prediction/Medicine`,
+            {
+              Medicine: meds,
+            }
+          );
+
+          console.log(response.data.data);
+
+          const predictions = response.data.data.map(
+            (data: any) => data.Medicine
+          );
+          setMedicinePrediction((prediction) => {
+            const newMedicinePrediction = [...prediction];
+            newMedicinePrediction[i] = predictions;
+            return newMedicinePrediction;
+          });
+        } else {
+          setMedicinePrediction((prediction) => {
+            const newMedicinePrediction = [...prediction];
+            newMedicinePrediction[i] = "";
+            return newMedicinePrediction;
+          });
+        }
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  const noRepeatMeds = useRef(true);
+  useEffect(() => {
+    if (noRepeat) {
+      MedicineDataPrediction();
+    }
+    noRepeatMeds.current = false;
+  }, [medicineData]);
 
   const noRepeat = useRef(true);
   useEffect(() => {
@@ -874,6 +997,7 @@ export default function InvoicePage() {
                     id={`vitals_name_${index}`}
                     name={`vites_name${index}`}
                     value={vital.vites_name}
+                    onKeyDown={(e: any) => AddingAutomation(e, index)}
                     onChange={(e) =>
                       handleVitalsChange(index, "vites_name", e.target.value)
                     }
@@ -957,6 +1081,7 @@ export default function InvoicePage() {
                     name={`test_name_${i}`}
                     className="border-2 border-gray-400 w-60 ml-2 mr-2"
                     value={data.test_name}
+                    onKeyDown={(e: any) => AddingTestAutomation(e, i)}
                     onChange={(e) =>
                       handleTestChange(i, "test_name", e.target.value)
                     }
@@ -968,6 +1093,7 @@ export default function InvoicePage() {
                         testPredictions[i].map(
                           (prediction: string, j: number) => (
                             <li
+                              className="bg-slate-100 shadow-lg rounded-md hover:bg-blue-700 hover:font-bold hover:text-white"
                               key={j}
                               onClick={(e) => onSelect(i, j, "test_name")}
                             >
@@ -1003,18 +1129,16 @@ export default function InvoicePage() {
           <div>
             <p>Medicine </p>
             {medicineData.map((data, i) => (
-              <div key={i} className="flex items-center mb-3">
-                <div className="flex flex-col">
+              <div key={i} className="flex  mb-3">
+                <div className="">
                   <label htmlFor={`medicine_name_${i}`}>Medicine name</label>
                   <input
                     type="text"
                     name={`medicine_name_${i}`}
-                    className="border-2 border-gray-400 w-32 text-sm ml-2 mr-2"
+                    className="border-2 border-gray-400 w-32 text-sm "
                     value={data.medicine_name}
+                    onKeyDown={(e: any) => AddingAutomationMedicine(e, i)}
                     onChange={(e) => {
-                      console.log("====================================");
-                      console.log(e.target.value);
-                      console.log("====================================");
                       return handleMedicineChange(
                         i,
                         "medicine_name",
@@ -1022,7 +1146,24 @@ export default function InvoicePage() {
                       );
                     }}
                   />
+                  <div>
+                    <ul>
+                      {medicinePrediction[i] &&
+                        medicinePrediction[i].map((data: any, j: any) => (
+                          <li
+                            onClick={(e) =>
+                              onSelectMedicine(e, i, j, "medicine_name")
+                            }
+                            className="bg-slate-100 shadow-lg rounded-md hover:bg-blue-700 hover:font-bold hover:text-white"
+                            key={j}
+                          >
+                            {data}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
                 </div>
+
                 <div className="flex flex-col">
                   <label htmlFor={`type_${i}`}>Type</label>
                   <select
@@ -1043,6 +1184,9 @@ export default function InvoicePage() {
                     <option value="Suspension">Suspension</option>
                     <option value="cream">cream</option>
                     <option value="gel">gel</option>
+                    <option value="Inhaler">Inhaler</option>
+                    <option value="Solution">Solution</option>
+                    <option value="Spray">Spray</option>
                   </select>
                 </div>
 
