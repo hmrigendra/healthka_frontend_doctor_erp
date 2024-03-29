@@ -15,10 +15,39 @@ export default function ClinicProfile() {
     clinic_name: "",
     start_time: "",
     end_time: "",
-    working_days: "",
+
     clinic_phone_number: "",
     GST: "",
   });
+  const [workingDays, setWorkingDays] = useState<Set<string>>(new Set());
+
+  const [onAdding, setOnAdding] = useState<boolean[]>([
+    false, // Monday
+    false, // Tuesday
+    false, // Wednesday
+    false, // Thursday
+    false, // Friday
+    false, // Saturday
+    false, // Sunday
+  ]);
+
+  const onSelect = (value: string, index: number) => {
+    setWorkingDays((previous) => {
+      const newSet = new Set(previous); // Create a new Set based on the previous state
+      if (newSet.has(value + " ")) {
+        newSet.delete(value + " "); // If the value exists in the set, delete it
+      } else {
+        newSet.add(value + " "); // If the value doesn't exist, add it to the set
+      }
+      setOnAdding((previousOnAdding) => {
+        const updatedOnAdding = [...previousOnAdding];
+        updatedOnAdding[index] = !updatedOnAdding[index];
+        return updatedOnAdding;
+      });
+      return newSet; // Return the new Set
+    });
+  };
+
   const [clinicAddress, setClinicAddress] = useState({
     house_number: "",
     lane: "",
@@ -42,14 +71,23 @@ export default function ClinicProfile() {
   // const test = () => {
   //   router.push("/Auth");
   // };
+
+  const [days, setDays] = useState([
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ]);
   const clinicPost = async () => {
     try {
       if (
         clinic.clinic_name.length === 0 ||
         clinic.start_time.length === 0 ||
         clinic.end_time.length === 0 ||
-        clinic.clinic_phone_number.length === 0 ||
-        clinic.working_days.length === 0
+        clinic.clinic_phone_number.length === 0
       ) {
         setErrors(true);
       } else {
@@ -63,7 +101,7 @@ export default function ClinicProfile() {
             clinic_name: clinic.clinic_name,
             start_time: clinic.start_time,
             end_time: clinic.end_time,
-            working_days: clinic.working_days,
+            working_days: [...workingDays],
             clinic_phone_number: clinic.clinic_phone_number,
             gst: clinic.GST,
             house_number: clinicAddress.house_number,
@@ -199,7 +237,7 @@ export default function ClinicProfile() {
               </div>
 
               <div className="flex w-full justify-between">
-                <div className="flex-col">
+                <div className="">
                   <p>GST</p>
                   <input
                     type="text"
@@ -211,24 +249,27 @@ export default function ClinicProfile() {
                     }
                   />
                 </div>
-                <div className="flex-col">
+                <div className="w-1/2">
                   <p>working days</p>
-                  <input
-                    type="text"
-                    placeholder="working days"
-                    className="bg-red-200 rounded-lg  m-3  placeholder:text-gray-500 w-[100%] p-2"
-                    value={clinic.working_days}
-                    onChange={(e) =>
-                      setClinic({ ...clinic, working_days: e.target.value })
-                    }
-                  />
-                  {clinic.working_days.length === 0 && errors ? (
+                  <ul className="space-x-1">
+                    {days.map((data: any, i: number) => (
+                      <li
+                        key={i}
+                        onClick={() => onSelect(data, i)}
+                        className={`inline-block m-2 p-2 rounded-md bg-red-300 cursor-pointer`}
+                      >
+                        {data && data.charAt(0)}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <p>{workingDays}</p>
+
+                  {workingDays.size === 0 && errors ? (
                     <p className="text-sm text-blue-700">
-                      Working days are required{" "}
+                      Working days are required
                     </p>
-                  ) : (
-                    ""
-                  )}
+                  ) : null}
                 </div>
               </div>
               <div>

@@ -49,6 +49,7 @@ export default function SignUp() {
     College_name: "",
     year_of_passing: "",
     experience: "",
+    NMC_doctor_id: "",
   });
   const [clinicOwned, setClinicOwned] = useState(0);
 
@@ -71,7 +72,8 @@ export default function SignUp() {
         qualification.experience.length === 0 ||
         qualification.qualification.length === 0 ||
         qualification.specialization.length === 0 ||
-        qualification.year_of_passing.length === 0
+        qualification.year_of_passing.length === 0 ||
+        qualification.NMC_doctor_id.length === 0
       ) {
         setErrors(true);
       } else {
@@ -88,11 +90,12 @@ export default function SignUp() {
             qualification: qualification.qualification,
             specialization: qualification.specialization,
             personal_clinic: clinicOwned,
-
+            NMC_doctor_id: qualification.NMC_doctor_id,
             college_name: qualification.College_name,
             year_of_passing: qualification.year_of_passing,
             experience: qualification.experience,
             house_number: doctorAddress.house_number,
+
             lane: doctorAddress.lane,
             address_one: doctorAddress.address_one,
             landmark: doctorAddress.landmark,
@@ -236,7 +239,7 @@ export default function SignUp() {
                     type="text"
                     className="w-full p-2  bg-red-200 rounded-lg"
                   />
-                  {doctorProfile.phone_number.length === 0 && errors ? (
+                  {doctorProfile.phone_number.length < 10 && errors ? (
                     <p className="text-sm text-blue-700">
                       Phone number can't be empty
                     </p>
@@ -473,24 +476,40 @@ export default function SignUp() {
                   ""
                 )}
               </div>
-              <div>
-                <input
-                  type="text"
-                  className="w-1/3 p-2 bg-red-200 rounded-lg mr-10 placeholder:text-gray-500"
-                  placeholder="Years of experience"
-                  value={qualification.experience}
-                  onChange={(e) =>
-                    SetQualification({
-                      ...qualification,
-                      experience: e.target.value,
-                    })
-                  }
-                />
-                {qualification.experience.length === 0 && errors ? (
-                  <p className="text-sm text-blue-700">required field</p>
-                ) : (
-                  ""
-                )}
+              <div className="w-full flex justify-around">
+                <div>
+                  <input
+                    type="text"
+                    className="w-full p-2  bg-red-200 rounded-lg m-2 placeholder:text-gray-500"
+                    placeholder="Years of experience"
+                    value={qualification.experience}
+                    onChange={(e) =>
+                      SetQualification({
+                        ...qualification,
+                        experience: e.target.value,
+                      })
+                    }
+                  />
+                  {qualification.experience.length === 0 && errors ? (
+                    <p className="text-sm text-blue-700">required field</p>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    className="w-full m-2 p-2 bg-red-200 rounded-lg ml-2 placeholder:text-gray-500"
+                    placeholder="NMC Doctor Id"
+                    value={qualification.NMC_doctor_id}
+                    onChange={(e) =>
+                      SetQualification({
+                        ...qualification,
+                        NMC_doctor_id: e.target.value,
+                      })
+                    }
+                  />
+                </div>
               </div>
               <Box>
                 <FormControlLabel
