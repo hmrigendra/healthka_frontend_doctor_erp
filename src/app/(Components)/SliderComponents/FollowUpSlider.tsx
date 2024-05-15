@@ -50,7 +50,7 @@ export function FollowUpSlider() {
   };
 
   return (
-    <div className="max-w-screen-lg mx-auto mt-7">
+    <div className="row-start-6 max-w-screen-lg mx-auto mt-7">
       <Link href="">
         <h2 className="cursor-help w-full h-12 items-center rounded-e-md flex justify-start pl-2 text-indigo-900 font-semibold  bg-production-red text-center rounded-lg">
           Todays Follow-Ups / Appointments(coming soon......)

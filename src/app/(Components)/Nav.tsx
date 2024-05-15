@@ -62,10 +62,11 @@ export function Nav() {
   }, []);
 
   return (
+    // <div className="navbar-container">
     <div
-      className={`bg-production-white h-lvh inline-block p-6 pt-8${
+      className={`col-span-1 bg-blue-300 h-lvh inline-block p-6 pt-8 fixed top-0 left${
         open ? " w-1/6" : " w-20"
-      } relative`}
+      }  md:flex h-screen `}
     >
       <BsArrowLeftShort
         onClick={() => setOpen(!open)}
@@ -84,10 +85,12 @@ export function Nav() {
           <CircularProgress color="inherit" />
         </Backdrop>
       ) : (
-        <ul className="list-none p-0 m-0">
+          <ul className=" list-none p-0 m-0 bg-teal-300 w-full" >
           <li
             onClick={() => setIsLoading(true)}
-            className={`inline-flex rounded-lg ${open ? "p-2 pl-7 pr-7" : ""}`}
+            className={`grid grid-row-6 inline-flex rounded-lg max-width w-full bg-red-300 ${
+              open ? "p-2 pl-7 pr-7" : ""
+            }`}
           >
             <h1
               className={`font-medium text-black origin-left text-2xl cursor-pointer duration-200 ${
@@ -130,7 +133,7 @@ export function Nav() {
                 className={`text-3xl rounded cursor-pointer mr-4 block float-left duration-500 `}
               />
               <span
-                className={`font-medium origin-left text-2xl cursor-pointer duration-200 ${
+                className={`font-medium origin-left text-2xl cursor-pointer duration-200  ${
                   !open && "scale-0"
                 }`}
               >
@@ -201,5 +204,6 @@ export function Nav() {
         </ul>
       )}
     </div>
+    // </div>
   );
 }
